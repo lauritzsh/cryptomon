@@ -4,14 +4,28 @@ loadCSS "./App.css";
 
 type state = {
   transactions: list Transaction.transaction,
-  cashes: StringMap.t Currency.cash,
-  cryptos: StringMap.t Currency.crypto
+  cashes: list (string, Currency.cash),
+  cryptos: list (string, Currency.crypto)
 };
 
-let component = ReasonReact.statelessComponent "App";
+type action =
+  | AddTransaction Transaction.transaction
+  | DeleteTransaction Transaction.transaction;
+
+let component = ReasonReact.reducerComponent "App";
 
 let make _children => {
   ...component,
-  render: fun _self =>
-    <div className="app"> <h2> (se "Hello, World") </h2> </div>
+  initialState: fun () => {
+    transactions: Transaction.Data.transactions,
+    cashes: Currency.Data.cashes,
+    cryptos: Currency.Data.cryptos
+  },
+  reducer: fun action state =>
+    switch action {
+    | AddTransaction _transaction => ReasonReact.Update state
+    | DeleteTransaction _transaction => ReasonReact.Update state
+    },
+  render: fun {state: {transactions}} =>
+    <div className="app"> <TransactionTable transactions /> </div>
 };

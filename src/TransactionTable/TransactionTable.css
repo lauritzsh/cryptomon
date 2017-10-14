@@ -1,0 +1,12 @@
+.transaction-table {
+  width: 100%;
+}
+
+.transaction-table table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.transaction-table table thead {
+  text-align: left;
+}
