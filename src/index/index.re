@@ -1,5 +1,9 @@
+open Helpers;
+
+loadCSS "./index.css";
+
 external register_service_worker : unit => unit =
-  "default" [@@bs.module "./registerServiceWorker"];
+  "default" [@@bs.module "../registerServiceWorker"];
 
 ReactDOMRe.renderToElementWithId <App /> "root";
 
