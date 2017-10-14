@@ -28,8 +28,8 @@ module SellRow = {
     render: fun _self =>
       <tr>
         <td> (se "S") </td>
-        <td> (format cash.id spend) </td>
-        <td> (format crypto.id received) </td>
+        <td> (format crypto.id spend) </td>
+        <td> (format cash.id received) </td>
         <td> (st timestamp |> se) </td>
         actions
       </tr>

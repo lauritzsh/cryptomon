@@ -26,6 +26,9 @@ let make _children => {
     | AddTransaction _transaction => ReasonReact.Update state
     | DeleteTransaction _transaction => ReasonReact.Update state
     },
-  render: fun {state: {transactions}} =>
-    <div className="app"> <TransactionTable transactions /> </div>
+  render: fun {state: {transactions, cryptos}} =>
+    <div className="app">
+      <Portfolio cryptos transactions />
+      <TransactionTable transactions />
+    </div>
 };

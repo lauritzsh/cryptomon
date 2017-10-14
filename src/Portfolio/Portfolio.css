@@ -1,0 +1,8 @@
+.portfolio {
+  lost-flex-container: row;
+  margin-bottom: 2em;
+}
+
+.portfolio-item {
+  lost-column: 1/4;
+}
