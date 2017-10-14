@@ -1,0 +1,9 @@
+# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
+* text=auto
+
+# GitHub specific
+*.re linguist-language=reason
+
+src/registerServiceWorker.js linguist-vendored
+config/* linguist-vendored
+scripts/* linguist-vendored
