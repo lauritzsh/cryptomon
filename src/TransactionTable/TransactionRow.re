@@ -1,116 +1,134 @@
 open Helpers;
 
-let format symbol amount => sup symbol ^ " " ^ sf amount |> se;
+exception UnknownTransaction;
 
-let actions = <td> <button> (se "x") </button> </td>;
+let format symbol amount => sup symbol ^ " " ^ sf amount |> se;
 
 module BuyRow = {
   open Currency;
+  open Transaction;
   let component = ReasonReact.statelessComponent "BuyRow";
-  let make cash::(cash: cash) ::spend ::crypto ::received ::timestamp _children => {
+  let make ::transaction ::onDelete _children => {
     ...component,
     render: fun _self =>
-      <tr>
-        <td> (se "B") </td>
-        <td> (format cash.id spend) </td>
-        <td> (format crypto.id received) </td>
-        <td> (st timestamp |> se) </td>
-        actions
-      </tr>
+      switch transaction.kind {
+      | Buy cash spend crypto received =>
+        <tr>
+          <td> (se "B") </td>
+          <td> (format cash.id spend) </td>
+          <td> (format crypto.id received) </td>
+          <td> (st transaction.timestamp |> se) </td>
+          <td> <button onClick=onDelete> (se "x") </button> </td>
+        </tr>
+      | _ => raise UnknownTransaction
+      }
   };
 };
 
 module SellRow = {
   open Currency;
+  open Transaction;
   let component = ReasonReact.statelessComponent "SellRow";
-  let make ::crypto ::spend cash::(cash: cash) ::received ::timestamp _children => {
+  let make ::transaction ::onDelete _children => {
     ...component,
     render: fun _self =>
-      <tr>
-        <td> (se "S") </td>
-        <td> (format crypto.id spend) </td>
-        <td> (format cash.id received) </td>
-        <td> (st timestamp |> se) </td>
-        actions
-      </tr>
+      switch transaction.kind {
+      | Sell crypto spend cash received =>
+        <tr>
+          <td> (se "S") </td>
+          <td> (format crypto.id spend) </td>
+          <td> (format cash.id received) </td>
+          <td> (st transaction.timestamp |> se) </td>
+          <td> <button onClick=onDelete> (se "x") </button> </td>
+        </tr>
+      | _ => raise UnknownTransaction
+      }
   };
 };
 
 module DepositRow = {
   open Currency;
+  open Transaction;
   let component = ReasonReact.statelessComponent "DepositRow";
-  let make ::currency ::received ::timestamp _children => {
+  let make ::transaction ::onDelete _children => {
     ...component,
-    render: fun _self => {
-      let td =
-        switch currency {
-        | Cash {id} => format id received
-        | Crypto {id} => format id received
-        };
-      <tr>
-        <td> (se "D") </td>
-        <td />
-        <td> td </td>
-        <td> (st timestamp |> se) </td>
-        actions
-      </tr>
-    }
+    render: fun _self =>
+      switch transaction.kind {
+      | Deposit currency received =>
+        let td =
+          switch currency {
+          | Cash {id} => format id received
+          | Crypto {id} => format id received
+          };
+        <tr>
+          <td> (se "D") </td>
+          <td />
+          <td> td </td>
+          <td> (st transaction.timestamp |> se) </td>
+          <td> <button onClick=onDelete> (se "x") </button> </td>
+        </tr>
+      | _ => raise UnknownTransaction
+      }
   };
 };
 
 module WithdrawRow = {
   open Currency;
+  open Transaction;
   let component = ReasonReact.statelessComponent "WithdrawRow";
-  let make ::currency ::received ::timestamp _children => {
+  let make ::transaction ::onDelete _children => {
     ...component,
-    render: fun _self => {
-      let td =
-        switch currency {
-        | Cash {id} => format id received
-        | Crypto {id} => format id received
-        };
-      <tr>
-        <td> (se "W") </td>
-        <td> td </td>
-        <td />
-        <td> (st timestamp |> se) </td>
-        actions
-      </tr>
-    }
+    render: fun _self =>
+      switch transaction.kind {
+      | Withdraw currency spend =>
+        let td =
+          switch currency {
+          | Cash {id} => format id spend
+          | Crypto {id} => format id spend
+          };
+        <tr>
+          <td> (se "W") </td>
+          <td> td </td>
+          <td />
+          <td> (st transaction.timestamp |> se) </td>
+          <td> <button onClick=onDelete> (se "x") </button> </td>
+        </tr>
+      | _ => raise UnknownTransaction
+      }
   };
 };
 
 module ExchangeRow = {
   open Currency;
+  open Transaction;
   let component = ReasonReact.statelessComponent "ExchangeRow";
-  let make ::from ::spend ::to' ::received ::timestamp _children => {
+  let make ::transaction ::onDelete _children => {
     ...component,
     render: fun _self =>
-      <tr>
-        <td> (se "E") </td>
-        <td> (format from.id spend) </td>
-        <td> (format to'.id received) </td>
-        <td> (st timestamp |> se) </td>
-        actions
-      </tr>
+      switch transaction.kind {
+      | Exchange from spend to' received =>
+        <tr>
+          <td> (se "E") </td>
+          <td> (format from.id spend) </td>
+          <td> (format to'.id received) </td>
+          <td> (st transaction.timestamp |> se) </td>
+          <td> <button onClick=onDelete> (se "x") </button> </td>
+        </tr>
+      | _ => raise UnknownTransaction
+      }
   };
 };
 
 let component = ReasonReact.statelessComponent "TransactionRow";
 
-let make transaction::(txn: Transaction.transaction) _children => {
+let make transaction::(txn: Transaction.transaction) ::onDelete _children => {
   ...component,
-  render: fun _self => {
-    let timestamp = txn.timestamp;
+  render: fun _self =>
     switch txn.kind {
-    | Buy cash spend crypto received =>
-      <BuyRow cash spend crypto received timestamp />
-    | Sell crypto spend cash received =>
-      <SellRow crypto spend cash received timestamp />
-    | Deposit currency received => <DepositRow currency received timestamp />
-    | Withdraw currency received => <WithdrawRow currency received timestamp />
-    | Exchange from spend to' received =>
-      <ExchangeRow from spend to' received timestamp />
+    | Buy _ => <BuyRow transaction=txn onDelete />
+    | Sell _ => <SellRow transaction=txn onDelete />
+    | Deposit _ => <DepositRow transaction=txn onDelete />
+    | Withdraw _ => <WithdrawRow transaction=txn onDelete />
+    | Exchange _ => <ExchangeRow transaction=txn onDelete />
     }
-  }
 };

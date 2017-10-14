@@ -9,8 +9,10 @@ type state = {
 };
 
 type action =
-  | AddTransaction Transaction.transaction
-  | DeleteTransaction Transaction.transaction;
+  | Add Transaction.transaction
+  | Delete Transaction.transaction;
+
+let delete transaction _event => Delete transaction;
 
 let component = ReasonReact.reducerComponent "App";
 
@@ -23,12 +25,18 @@ let make _children => {
   },
   reducer: fun action state =>
     switch action {
-    | AddTransaction _transaction => ReasonReact.Update state
-    | DeleteTransaction _transaction => ReasonReact.Update state
+    | Add _transaction => ReasonReact.Update state
+    | Delete transaction =>
+      let transactions =
+        List.filter (fun txn => txn !== transaction) state.transactions;
+      ReasonReact.Update {...state, transactions}
     },
-  render: fun {state: {transactions, cryptos}} =>
+  render: fun {reduce, state: {transactions, cryptos}} =>
     <div className="app">
       <Portfolio cryptos transactions />
-      <TransactionTable transactions />
+      <TransactionTable
+        transactions
+        onDelete=(fun transaction => reduce (delete transaction))
+      />
     </div>
 };
