@@ -25,3 +25,47 @@ module Data = {
   let neo = {id: "neo", name: "NEO", usd_rate: 28.88, btc_rate: 0.00503792};
   let cryptos = [(btc.id, btc), (ltc.id, ltc), (neo.id, neo)];
 };
+
+module Encode = {
+  open! Json.Encode;
+  let cash (c: cash) =>
+    object_ [
+      ("type", string "cash"),
+      ("id", string c.id),
+      ("usd_rate", float c.usd_rate)
+    ];
+  let crypto c =>
+    object_ [
+      ("type", string "crypto"),
+      ("id", string c.id),
+      ("name", string c.name),
+      ("usd_rate", float c.usd_rate),
+      ("btc_rate", float c.btc_rate)
+    ];
+  let currency c =>
+    switch c {
+    | Crypto crypto' => crypto crypto'
+    | Cash cash' => cash cash'
+    };
+};
+
+module Decode = {
+  open! Json.Decode;
+  exception DecodeException string;
+  let cash json => {
+    id: field "id" string json,
+    usd_rate: field "usd_rate" float json
+  };
+  let crypto json => {
+    id: field "id" string json,
+    name: field "name" string json,
+    usd_rate: field "usd_rate" float json,
+    btc_rate: field "btc_rate" float json
+  };
+  let currency json =>
+    switch (field "type" string json) {
+    | "cash" => Cash (cash json)
+    | "crypto" => Crypto (crypto json)
+    | currency => raise (DecodeException (currency ^ ": not found"))
+    };
+};

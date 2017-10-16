@@ -20,6 +20,7 @@ type transaction = {
 /* Sample data for development */
 module Data = {
   open Currency.Data;
+  let transaction = {timestamp: 3, note: "", kind: Buy usd 50. btc 1.0};
   let transactions = [
     {timestamp: 7, note: "", kind: Exchange btc 0.1 ltc 1.0},
     {timestamp: 6, note: "", kind: Withdraw (Cash usd) 10.0},
@@ -29,4 +30,90 @@ module Data = {
     {timestamp: 2, note: "", kind: Deposit (Crypto btc) 0.5},
     {timestamp: 1, note: "", kind: Deposit (Cash usd) 100.0}
   ];
+};
+
+module Encode = {
+  open! Json.Encode;
+  let kind m =>
+    switch m {
+    | Buy cash spend crypto received =>
+      object_ [
+        ("type", string "buy"),
+        ("cash", Currency.Encode.cash cash),
+        ("crypto", Currency.Encode.crypto crypto),
+        ("received", float received),
+        ("spend", float spend)
+      ]
+    | Sell crypto spend cash received =>
+      object_ [
+        ("type", string "sell"),
+        ("cash", Currency.Encode.cash cash),
+        ("crypto", Currency.Encode.crypto crypto),
+        ("received", float received),
+        ("spend", float spend)
+      ]
+    | Deposit currency received =>
+      object_ [
+        ("type", string "deposit"),
+        ("currency", Currency.Encode.currency currency),
+        ("received", float received)
+      ]
+    | Withdraw currency spend =>
+      object_ [
+        ("type", string "withdraw"),
+        ("currency", Currency.Encode.currency currency),
+        ("spend", float spend)
+      ]
+    | Exchange from spend _to received =>
+      object_ [
+        ("type", string "exchange"),
+        ("from", Currency.Encode.crypto from),
+        ("to", Currency.Encode.crypto _to),
+        ("received", float received),
+        ("spend", float spend)
+      ]
+    };
+  let transaction t =>
+    object_ [
+      ("timestamp", int t.timestamp),
+      ("note", string t.note),
+      ("kind", kind t.kind)
+    ];
+};
+
+module Decode = {
+  open! Json.Decode;
+  open Currency.Decode;
+  exception DecodeException string;
+  let kind json =>
+    switch (field "type" string json) {
+    | "buy" =>
+      Buy
+        (field "cash" cash json)
+        (field "spend" float json)
+        (field "crypto" crypto json)
+        (field "received" float json)
+    | "sell" =>
+      Sell
+        (field "crypto" crypto json)
+        (field "spend" float json)
+        (field "cash" cash json)
+        (field "received" float json)
+    | "deposit" =>
+      Deposit (field "currency" currency json) (field "received" float json)
+    | "withdraw" =>
+      Withdraw (field "currency" currency json) (field "spend" float json)
+    | "exchange" =>
+      Exchange
+        (field "from" crypto json)
+        (field "spend" float json)
+        (field "to" crypto json)
+        (field "received" float json)
+    | kind => raise (DecodeException (kind ^ ": not found"))
+    };
+  let transaction json => {
+    timestamp: field "timestamp" int json,
+    note: field "note" string json,
+    kind: field "kind" kind json
+  };
 };
