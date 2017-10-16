@@ -2,15 +2,15 @@ external loadCSS : string => unit = "require" [@@bs.val];
 
 type date;
 
-external create_date : int => date = "Date" [@@bs.new];
+external create_date : float => date = "Date" [@@bs.new];
 
 external string_of_date : date => string = "toLocaleString" [@@bs.send];
 
-external timestamp : unit => int = "Date.now" [@@bs.val];
+external timestamp : unit => float = "Date.now" [@@bs.val];
 
 let string_of_timestamp ts => ts |> create_date |> string_of_date;
 
-let st ts => ts |> create_date |> string_of_date;
+let st = string_of_timestamp;
 
 let se = ReasonReact.stringToElement;
 
