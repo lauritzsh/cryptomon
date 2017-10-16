@@ -1,5 +1,7 @@
 open Helpers;
 
+loadCSS "./TransactionForm.css";
+
 module FormInputs = TransactionFormInputs;
 
 type values =
@@ -17,18 +19,18 @@ module BuyForm = {
       ::cryptoInput
       ::receivedInput
       ::spendInput
-      ::onSubmit
+      ::submitButton
       _children => {
     ...component,
     render: fun _self =>
-      <div>
+      <Aux>
         kindInput
         receivedInput
         cryptoInput
         spendInput
         cashInput
-        <button onClick=onSubmit> (se "+") </button>
-      </div>
+        submitButton
+      </Aux>
   };
 };
 
@@ -40,18 +42,18 @@ module SellForm = {
       ::cryptoInput
       ::receivedInput
       ::spendInput
-      ::onSubmit
+      ::submitButton
       _children => {
     ...component,
     render: fun _self =>
-      <div>
+      <Aux>
         kindInput
         receivedInput
         cashInput
         spendInput
         cryptoInput
-        <button onClick=onSubmit> (se "+") </button>
-      </div>
+        submitButton
+      </Aux>
   };
 };
 
@@ -62,17 +64,18 @@ module DepositForm = {
       ::cashInput
       ::cryptoInput
       ::receivedInput
-      ::onSubmit
+      ::submitButton
       _children => {
     ...component,
     render: fun _self =>
-      <div>
+      <Aux>
         kindInput
         receivedInput
         cashInput
+        <div className="divider"> (se "or") </div>
         cryptoInput
-        <button onClick=onSubmit> (se "+") </button>
-      </div>
+        submitButton
+      </Aux>
   };
 };
 
@@ -83,17 +86,18 @@ module WithdrawForm = {
       ::cashInput
       ::cryptoInput
       ::spendInput
-      ::onSubmit
+      ::submitButton
       _children => {
     ...component,
     render: fun _self =>
-      <div>
+      <Aux>
         kindInput
         spendInput
         cashInput
+        <div className="divider"> (se "or") </div>
         cryptoInput
-        <button onClick=onSubmit> (se "+") </button>
-      </div>
+        submitButton
+      </Aux>
   };
 };
 
@@ -105,18 +109,18 @@ module ExchangeForm = {
       ::fromInput
       ::receivedInput
       ::toInput
-      ::onSubmit
+      ::submitButton
       _children => {
     ...component,
     render: fun _self =>
-      <div>
+      <Aux>
         kindInput
         spendInput
         fromInput
         receivedInput
         toInput
-        <button onClick=onSubmit> (se "+") </button>
-      </div>
+        submitButton
+      </Aux>
   };
 };
 
@@ -223,33 +227,41 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         value=crypto
         onChange=(reduce changeCrypto)
         options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+        selectText="Select crypto"
       />;
     let cashInput =
       <Inputs.Select
         value=cash
         onChange=(reduce changeCash)
         options=(List.map (fun (id, _) => (id, sup id)) cashes)
+        selectText="Select cash"
       />;
     let fromInput =
       <Inputs.Select
         value=from
         onChange=(reduce changeFrom)
         options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+        selectText="Select crypto"
       />;
     let toInput =
       <Inputs.Select
         value=_to
         onChange=(reduce changeTo)
         options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+        selectText="Select crypto"
       />;
     let kindInput =
-      <select value=(string_of_kind kind) onChange=(reduce changeKind)>
-        <option value="buy"> (se "Buy") </option>
-        <option value="sell"> (se "Sell") </option>
-        <option value="deposit"> (se "Deposit") </option>
-        <option value="withdraw"> (se "Withdraw") </option>
-        <option value="exchange"> (se "Exchange") </option>
-      </select>;
+      <Inputs.Select
+        value=(string_of_kind kind)
+        onChange=(reduce changeKind)
+        options=[
+          ("buy", "Buy"),
+          ("sell", "Sell"),
+          ("deposit", "Deposit"),
+          ("withdraw", "Withdraw"),
+          ("exchange", "Exchange")
+        ]
+      />;
     let handleSubmit _event => {
       open! Transaction;
       open! Currency;
@@ -271,6 +283,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         onSubmit (Exchange (from' ()) (spend' ()) (to' ()) (received' ()))
       }
     };
+    let submitButton = <Inputs.Button value="+" onClick=handleSubmit />;
     <div className="transaction-form">
       (
         switch kind {
@@ -281,7 +294,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
             cryptoInput
             receivedInput
             spendInput
-            onSubmit=handleSubmit
+            submitButton
           />
         | Sell =>
           <SellForm
@@ -290,7 +303,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
             cryptoInput
             receivedInput
             spendInput
-            onSubmit=handleSubmit
+            submitButton
           />
         | Deposit =>
           <DepositForm
@@ -298,7 +311,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
             cashInput
             cryptoInput
             receivedInput
-            onSubmit=handleSubmit
+            submitButton
           />
         | Withdraw =>
           <WithdrawForm
@@ -306,7 +319,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
             cashInput
             cryptoInput
             spendInput
-            onSubmit=handleSubmit
+            submitButton
           />
         | Exchange =>
           <ExchangeForm
@@ -315,7 +328,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
             receivedInput
             spendInput
             toInput
-            onSubmit=handleSubmit
+            submitButton
           />
         }
       )

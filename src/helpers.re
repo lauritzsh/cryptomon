@@ -28,6 +28,8 @@ let fs = float_of_string;
 
 let sup = String.uppercase;
 
+let slo = String.lowercase;
+
 let valueFromEvent evt => {
   let obj = evt |> ReactEventRe.Form.target |> ReactDOMRe.domElementToObj;
   obj##value

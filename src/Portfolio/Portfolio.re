@@ -16,9 +16,10 @@ module PortfolioItem = {
     ...component,
     render: fun _self =>
       <div className="portfolio-item">
-        <h2> (se item.name) </h2>
-        <h3> ("$" ^ sf item.value |> se) </h3>
-        <h3> (sf item.amount |> se) </h3>
+        <h2 className="name"> (se item.name) </h2>
+        <h3 className="value">
+          ("$" ^ sf item.value ^ " (" ^ sf item.amount ^ ")" |> se)
+        </h3>
       </div>
   };
 };

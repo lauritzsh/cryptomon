@@ -1,0 +1,6 @@
+.transaction-form {
+  display: flex;
+  margin: 0 -1em;
+  align-items: center;
+  margin-bottom: 3rem;
+}

@@ -1,8 +1,12 @@
 open Helpers;
 
+loadCSS "./TransactionRow.css";
+
 exception UnknownTransaction;
 
 let format symbol amount => sup symbol ^ " " ^ sf amount |> se;
+
+let kind letter => <div className="kind"> (se letter) </div>;
 
 module BuyRow = {
   open Currency;
@@ -14,11 +18,11 @@ module BuyRow = {
       switch transaction.kind {
       | Buy cash spend crypto received =>
         <tr>
-          <td> (se "B") </td>
+          <td> (kind "B") </td>
           <td> (format cash.id spend) </td>
           <td> (format crypto.id received) </td>
           <td> (st transaction.timestamp |> se) </td>
-          <td> <button onClick=onDelete> (se "x") </button> </td>
+          <td> <Inputs.ActionButton value="x" onClick=onDelete /> </td>
         </tr>
       | _ => raise UnknownTransaction
       }
@@ -35,11 +39,11 @@ module SellRow = {
       switch transaction.kind {
       | Sell crypto spend cash received =>
         <tr>
-          <td> (se "S") </td>
+          <td> (kind "S") </td>
           <td> (format crypto.id spend) </td>
           <td> (format cash.id received) </td>
           <td> (st transaction.timestamp |> se) </td>
-          <td> <button onClick=onDelete> (se "x") </button> </td>
+          <td> <Inputs.ActionButton value="x" onClick=onDelete /> </td>
         </tr>
       | _ => raise UnknownTransaction
       }
@@ -61,11 +65,11 @@ module DepositRow = {
           | Crypto {id} => format id received
           };
         <tr>
-          <td> (se "D") </td>
+          <td> (kind "D") </td>
           <td />
           <td> td </td>
           <td> (st transaction.timestamp |> se) </td>
-          <td> <button onClick=onDelete> (se "x") </button> </td>
+          <td> <Inputs.ActionButton value="x" onClick=onDelete /> </td>
         </tr>
       | _ => raise UnknownTransaction
       }
@@ -87,11 +91,11 @@ module WithdrawRow = {
           | Crypto {id} => format id spend
           };
         <tr>
-          <td> (se "W") </td>
+          <td> (kind "W") </td>
           <td> td </td>
           <td />
           <td> (st transaction.timestamp |> se) </td>
-          <td> <button onClick=onDelete> (se "x") </button> </td>
+          <td> <Inputs.ActionButton value="x" onClick=onDelete /> </td>
         </tr>
       | _ => raise UnknownTransaction
       }
@@ -108,11 +112,11 @@ module ExchangeRow = {
       switch transaction.kind {
       | Exchange from spend to' received =>
         <tr>
-          <td> (se "E") </td>
+          <td> (kind "E") </td>
           <td> (format from.id spend) </td>
           <td> (format to'.id received) </td>
           <td> (st transaction.timestamp |> se) </td>
-          <td> <button onClick=onDelete> (se "x") </button> </td>
+          <td> <Inputs.ActionButton value="x" onClick=onDelete /> </td>
         </tr>
       | _ => raise UnknownTransaction
       }

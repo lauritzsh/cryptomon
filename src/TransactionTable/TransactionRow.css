@@ -1,0 +1,14 @@
+@import '../index/properties.css';
+
+td {
+  & .kind {
+    padding-top: 0.1rem;
+    text-align: center;
+    line-height: 2rem;
+    height: 2rem;
+    width: 2rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+  }
+}

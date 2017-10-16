@@ -21,7 +21,7 @@ let make ::transactions ::onDelete _children => {
             <th />
             <th> (se "Spend") </th>
             <th> (se "Received") </th>
-            <th> (se "Timestamp") </th>
+            <th> (se "When") </th>
             <th />
           </tr>
         </thead>

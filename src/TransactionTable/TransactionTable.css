@@ -1,12 +1,47 @@
+@import '../index/properties.css';
+
 .transaction-table {
   width: 100%;
-}
+  border-bottom-left-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem;
+  border-top-left-radius: 0.2rem;
+  border-top-right-radius: 0.2rem;
 
-.transaction-table table {
-  width: 100%;
-  table-layout: fixed;
-}
+  & table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
 
-.transaction-table table thead {
-  text-align: left;
+  & td:last-child {
+    float: right;
+  }
+
+  & thead tr {
+    text-align: left;
+    height: 2rem;
+  }
+
+  & thead th {
+    padding: 1rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: hsl(0, 0%, 50%);
+
+    &:first-child {
+      width: 4rem;
+    }
+  }
+
+  & tbody tr {
+    border-bottom: 1px solid var(--primary-color);
+
+    &:last-child {
+      border: none;
+    }
+  }
+
+  & tbody td {
+    padding: 1rem;
+  }
 }
