@@ -194,17 +194,15 @@ module.exports = {
               ident: 'postcss',
               plugins: () => [
                 require('postcss-import')(),
-                require('postcss-cssnext')(),
-                require('postcss-flexbugs-fixes')(),
-                require('lost')(),
-                autoprefixer({
+                require('postcss-flexbugs-fixes'),
+                require('lost'),
+                require('postcss-cssnext')({
                   browsers: [
                     '>1%',
                     'last 4 versions',
                     'Firefox ESR',
                     'not ie < 11',
                   ],
-                  flexbox: 'no-2009',
                 }),
               ],
             },
