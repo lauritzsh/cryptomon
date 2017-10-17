@@ -46,10 +46,18 @@ module Decode = {
   };
 };
 
+let sortTransactions state => {
+  ...state,
+  transactions:
+    List.sort
+      Transaction.(fun a b => b.timestamp -. a.timestamp |> int_of_float)
+      state.transactions
+};
+
 let persist ({state}: ReasonReact.self state 'a action) =>
   Dom.Storage.setItem
     "state"
-    (state |> Encode.state |> Js.Json.stringify)
+    (state |> sortTransactions |> Encode.state |> Js.Json.stringify)
     Dom.Storage.localStorage;
 
 let initialState () =>
