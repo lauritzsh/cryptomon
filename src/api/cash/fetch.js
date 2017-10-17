@@ -1,5 +1,5 @@
 exports.fetch = () =>
-  fetch('http://api.fixer.io/latest?base=USD')
+  fetch('https://api.fixer.io/latest?base=USD')
     .then(res => res.json())
     .then(({ rates }) => [
       { id: 'USD', usd_rate: 1.0 },
