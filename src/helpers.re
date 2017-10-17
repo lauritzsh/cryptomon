@@ -6,6 +6,8 @@ external create_date : float => date = "Date" [@@bs.new];
 
 external string_of_date : date => string = "toLocaleString" [@@bs.send];
 
+external timestamp_of_date : date => float = "getTime" [@@bs.send];
+
 external timestamp : unit => float = "Date.now" [@@bs.val];
 
 let string_of_timestamp ts => ts |> create_date |> string_of_date;

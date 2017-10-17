@@ -79,7 +79,8 @@ type state = {
   crypto: string,
   cash: string,
   from: string, /* exchange */
-  _to: string /* exchange */
+  _to: string, /* exchange */
+  timestamp: float
 };
 
 type action =
@@ -89,7 +90,8 @@ type action =
   | ChangeCrypto string
   | ChangeCash string
   | ChangeFrom string
-  | ChangeTo string;
+  | ChangeTo string
+  | ChangeTimestamp float;
 
 exception UnknownKey;
 
@@ -116,6 +118,8 @@ let changeFrom event => ChangeFrom (valueFromEvent event);
 
 let changeTo event => ChangeTo (valueFromEvent event);
 
+let changeTimestamp timestamp => ChangeTimestamp timestamp;
+
 let handleSubmit onSubmit values _event => onSubmit values;
 
 let component = ReasonReact.reducerComponent "TransactionForm";
@@ -129,7 +133,8 @@ let make ::cryptos ::cashes ::onSubmit _children => {
     crypto: "",
     cash: "",
     from: "",
-    _to: ""
+    _to: "",
+    timestamp: timestamp ()
   },
   reducer: fun action state =>
     switch action {
@@ -140,9 +145,13 @@ let make ::cryptos ::cashes ::onSubmit _children => {
     | ChangeCash cash => ReasonReact.Update {...state, cash}
     | ChangeFrom from => ReasonReact.Update {...state, from}
     | ChangeTo _to => ReasonReact.Update {...state, _to}
+    | ChangeTimestamp timestamp => ReasonReact.Update {...state, timestamp}
     },
   render:
-    fun {reduce, state: {kind, received, spend, crypto, cash, from, _to}} => {
+    fun {
+          reduce,
+          state: {kind, received, spend, crypto, cash, from, _to, timestamp}
+        } => {
     let receivedInput =
       <Inputs.Number
         value=received
@@ -195,13 +204,22 @@ let make ::cryptos ::cashes ::onSubmit _children => {
       let currency' () => crypto != "" ? Crypto (crypto' ()) : Cash (cash' ());
       switch kind {
       | Buy =>
-        onSubmit (Buy (cash' ()) (spend' ()) (crypto' ()) (received' ()))
+        onSubmit (
+          Buy (cash' ()) (spend' ()) (crypto' ()) (received' ()),
+          timestamp
+        )
       | Sell =>
-        onSubmit (Sell (crypto' ()) (spend' ()) (cash' ()) (received' ()))
-      | Deposit => onSubmit (Deposit (currency' ()) (received' ()))
-      | Withdraw => onSubmit (Withdraw (currency' ()) (spend' ()))
+        onSubmit (
+          Sell (crypto' ()) (spend' ()) (cash' ()) (received' ()),
+          timestamp
+        )
+      | Deposit => onSubmit (Deposit (currency' ()) (received' ()), timestamp)
+      | Withdraw => onSubmit (Withdraw (currency' ()) (spend' ()), timestamp)
       | Exchange =>
-        onSubmit (Exchange (from' ()) (spend' ()) (to' ()) (received' ()))
+        onSubmit (
+          Exchange (from' ()) (spend' ()) (to' ()) (received' ()),
+          timestamp
+        )
       }
     };
     <div className="transaction-form">
@@ -226,7 +244,8 @@ let make ::cryptos ::cashes ::onSubmit _children => {
           <ExchangeForm fromInput receivedInput spendInput toInput />
         }
       )
-      <Inputs.Button value="+" onClick=handleSubmit />
+      <Inputs.Date onChange=(reduce changeTimestamp) />
+      <Inputs.ActionButton value="+" onClick=handleSubmit />
     </div>
   }
 };

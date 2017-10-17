@@ -2731,6 +2731,10 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
+flatpickr@^4.0.1:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.0.5.tgz#987bffa290d01471739c4438f7208f1f602fca11"
+
 flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
@@ -5650,7 +5654,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.6.0:
+prop-types@^15.5.10, prop-types@^15.6.0:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
   dependencies:
@@ -5804,6 +5808,13 @@ react-error-overlay@^1.0.9:
     react-dev-utils "^3.1.0"
     settle-promise "1.0.0"
     source-map "0.5.6"
+
+react-flatpickr@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-flatpickr/-/react-flatpickr-3.6.0.tgz#5309d97a390176a93dc2f86142e624f0fd7b77a6"
+  dependencies:
+    flatpickr "^4.0.1"
+    prop-types "^15.5.10"
 
 react@>=15.0.0, react@^16.0.0:
   version "16.0.0"

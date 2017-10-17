@@ -59,3 +59,19 @@ module Select = {
     }
   };
 };
+
+module Date = {
+  exception WrongDateSelection;
+  let component = ReasonReact.statelessComponent "DateInput";
+  let make ::onChange _children => {
+    ...component,
+    render: fun _self => {
+      let handleChange dates =>
+        switch dates {
+        | [date] => onChange (timestamp_of_date date)
+        | _ => raise WrongDateSelection
+        };
+      <div className="input"> <Flatpickr onChange=handleChange /> </div>
+    }
+  };
+};

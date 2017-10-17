@@ -3,7 +3,7 @@
 .input,
 .button,
 .divider {
-  flex: 1 0 0;
+  flex: 2 0 0;
   padding: 0 1rem;
 }
 
@@ -37,6 +37,7 @@
 
 .button.action {
   padding: 0;
+  flex: 1 0 0;
 }
 
 .button.action button {

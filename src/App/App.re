@@ -62,7 +62,7 @@ let receiveCashes cashes => ReceiveCashes cashes;
 
 let receiveCryptos cryptos => ReceiveCryptos cryptos;
 
-let add kind => Add {timestamp: timestamp (), note: "", kind};
+let add (kind, timestamp) => Add {timestamp, note: "", kind};
 
 let delete transaction _event => Delete transaction;
 
