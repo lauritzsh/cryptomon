@@ -2,125 +2,58 @@ open Helpers;
 
 loadCSS "./TransactionForm.css";
 
-module FormInputs = TransactionFormInputs;
-
-type values =
-  | BuyValues string string string string
-  | SellValues string string string string
-  | DepositValues string string string
-  | WithdrawValues string string string
-  | ExchangeValues string string string string;
-
 module BuyForm = {
   let component = ReasonReact.statelessComponent "BuyForm";
-  let make
-      ::kindInput
-      ::cashInput
-      ::cryptoInput
-      ::receivedInput
-      ::spendInput
-      ::submitButton
-      _children => {
+  let make ::cashInput ::cryptoInput ::receivedInput ::spendInput _children => {
     ...component,
     render: fun _self =>
-      <Aux>
-        kindInput
-        receivedInput
-        cryptoInput
-        spendInput
-        cashInput
-        submitButton
-      </Aux>
+      <Aux> receivedInput cryptoInput spendInput cashInput </Aux>
   };
 };
 
 module SellForm = {
   let component = ReasonReact.statelessComponent "SellForm";
-  let make
-      ::kindInput
-      ::cashInput
-      ::cryptoInput
-      ::receivedInput
-      ::spendInput
-      ::submitButton
-      _children => {
+  let make ::cashInput ::cryptoInput ::receivedInput ::spendInput _children => {
     ...component,
     render: fun _self =>
-      <Aux>
-        kindInput
-        receivedInput
-        cashInput
-        spendInput
-        cryptoInput
-        submitButton
-      </Aux>
+      <Aux> receivedInput cashInput spendInput cryptoInput </Aux>
   };
 };
 
 module DepositForm = {
   let component = ReasonReact.statelessComponent "SellForm";
-  let make
-      ::kindInput
-      ::cashInput
-      ::cryptoInput
-      ::receivedInput
-      ::submitButton
-      _children => {
+  let make ::cashInput ::cryptoInput ::receivedInput _children => {
     ...component,
     render: fun _self =>
       <Aux>
-        kindInput
         receivedInput
         cashInput
         <div className="divider"> (se "or") </div>
         cryptoInput
-        submitButton
       </Aux>
   };
 };
 
 module WithdrawForm = {
   let component = ReasonReact.statelessComponent "SellForm";
-  let make
-      ::kindInput
-      ::cashInput
-      ::cryptoInput
-      ::spendInput
-      ::submitButton
-      _children => {
+  let make ::cashInput ::cryptoInput ::spendInput _children => {
     ...component,
     render: fun _self =>
       <Aux>
-        kindInput
         spendInput
         cashInput
         <div className="divider"> (se "or") </div>
         cryptoInput
-        submitButton
       </Aux>
   };
 };
 
 module ExchangeForm = {
   let component = ReasonReact.statelessComponent "SellForm";
-  let make
-      ::kindInput
-      ::spendInput
-      ::fromInput
-      ::receivedInput
-      ::toInput
-      ::submitButton
-      _children => {
+  let make ::spendInput ::fromInput ::receivedInput ::toInput _children => {
     ...component,
     render: fun _self =>
-      <Aux>
-        kindInput
-        spendInput
-        fromInput
-        receivedInput
-        toInput
-        submitButton
-      </Aux>
+      <Aux> spendInput fromInput receivedInput toInput </Aux>
   };
 };
 
@@ -250,18 +183,6 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
         selectText="Select crypto"
       />;
-    let kindInput =
-      <Inputs.Select
-        value=(string_of_kind kind)
-        onChange=(reduce changeKind)
-        options=[
-          ("buy", "Buy"),
-          ("sell", "Sell"),
-          ("deposit", "Deposit"),
-          ("withdraw", "Withdraw"),
-          ("exchange", "Exchange")
-        ]
-      />;
     let handleSubmit _event => {
       open! Transaction;
       open! Currency;
@@ -283,55 +204,29 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         onSubmit (Exchange (from' ()) (spend' ()) (to' ()) (received' ()))
       }
     };
-    let submitButton = <Inputs.Button value="+" onClick=handleSubmit />;
     <div className="transaction-form">
+      <Inputs.Select
+        value=(string_of_kind kind)
+        onChange=(reduce changeKind)
+        options=[
+          ("buy", "Buy"),
+          ("sell", "Sell"),
+          ("deposit", "Deposit"),
+          ("withdraw", "Withdraw"),
+          ("exchange", "Exchange")
+        ]
+      />
       (
         switch kind {
-        | Buy =>
-          <BuyForm
-            kindInput
-            cashInput
-            cryptoInput
-            receivedInput
-            spendInput
-            submitButton
-          />
-        | Sell =>
-          <SellForm
-            kindInput
-            cashInput
-            cryptoInput
-            receivedInput
-            spendInput
-            submitButton
-          />
-        | Deposit =>
-          <DepositForm
-            kindInput
-            cashInput
-            cryptoInput
-            receivedInput
-            submitButton
-          />
-        | Withdraw =>
-          <WithdrawForm
-            kindInput
-            cashInput
-            cryptoInput
-            spendInput
-            submitButton
-          />
+        | Buy => <BuyForm cashInput cryptoInput receivedInput spendInput />
+        | Sell => <SellForm cashInput cryptoInput receivedInput spendInput />
+        | Deposit => <DepositForm cashInput cryptoInput receivedInput />
+        | Withdraw => <WithdrawForm cashInput cryptoInput spendInput />
         | Exchange =>
-          <ExchangeForm
-            kindInput
-            fromInput
-            receivedInput
-            spendInput
-            toInput
-            submitButton
-          />
+          <ExchangeForm fromInput receivedInput spendInput toInput />
         }
       )
+      <Inputs.Button value="+" onClick=handleSubmit />
     </div>
   }
 };

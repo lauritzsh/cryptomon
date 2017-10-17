@@ -37,7 +37,7 @@ type options = list (string, string);
 
 module Select = {
   let component = ReasonReact.statelessComponent "SelectInput";
-  let make ::value ::onChange ::options ::selectText="Select one" _children => {
+  let make ::value ::onChange ::options ::selectText="" _children => {
     ...component,
     render: fun _self => {
       let options =
@@ -48,7 +48,11 @@ module Select = {
         |> le;
       <div className="input select">
         <select value onChange>
-          <option disabled=Js.true_ value=""> (se selectText) </option>
+          (
+            selectText == "" ?
+              ReasonReact.nullElement :
+              <option disabled=Js.true_ value=""> (se selectText) </option>
+          )
           options
         </select>
       </div>
