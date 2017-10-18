@@ -2,25 +2,41 @@
 
 .portfolio {
   lost-flex-container: row;
-  margin-bottom: 4rem;
+
+  margin-bottom: var(--section-spacing);
+
+  & .portfolio-item {
+    animation-duration: 1s;
+    animation-name: slidein;
+
+    opacity: 1;
+    transition: opacity 1s;
+
+    lost-column: 1/4;
+    padding: var(--spacing);
+    background: var(--primary-color);
+    color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+
+    & .name {
+      font-weight: 700;
+      margin: 0 0 calc(var(--spacing) / 2) 0;
+    }
+
+    & .value {
+      font-weight: 200;
+      margin: 0;
+    }
+  }
 }
 
-.portfolio-item {
-  lost-column: 1/4;
-  background: var(--primary-color);
-  color: white;
-  padding: 1rem;
-  border-radius: 0.3rem;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1), 0 3px 8px rgba(0, 0, 0, 0.2),
-    0 0 1px rgba(0, 0, 0, 0.4);
-}
-
-.portfolio-item {
-  & .name {
-    margin-top: 0;
+@keyframes slidein {
+  from {
+    opacity: 0;
   }
 
-  & .value {
-    margin-bottom: 0;
+  to {
+    opacity: 1;
   }
 }

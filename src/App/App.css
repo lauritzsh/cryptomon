@@ -1,9 +1,19 @@
-.app {
+@import '../index/properties.css';
+
+.loader {
+  text-align: center;
+  color: color(var(--primary-color) alpha(80%));
+  margin-top: calc(var(--spacing) * 4);
+}
+
+.header {
+  height: 1rem;
+  background: var(--primary-color);
+  margin-bottom: calc(var(--section-spacing) * 1.25);
+}
+
+.body {
   width: 960px;
   margin: 0 auto;
-  background: hsl(0, 0%, 98%);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
-    0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  color: var(--text-color);
 }

@@ -8,6 +8,7 @@ type cash = {
 type crypto = {
   id: string, /* btc, eth etc. */
   name: string, /* Bitcoin, Ethereum etc. */
+  symbol: string, /* BTC, ETH etc. */
   usd_rate: float,
   btc_rate: float
 };
@@ -20,9 +21,27 @@ type currency =
 module Data = {
   let usd = {id: "usd", usd_rate: 1.0};
   let cashes = [(usd.id, usd)];
-  let btc = {id: "btc", name: "Bitcoin", usd_rate: 5709.4, btc_rate: 1.0};
-  let ltc = {id: "ltc", name: "Litecoin", usd_rate: 60.75, btc_rate: 0.010626};
-  let neo = {id: "neo", name: "NEO", usd_rate: 28.88, btc_rate: 0.00503792};
+  let btc = {
+    id: "bitcoin",
+    name: "Bitcoin",
+    symbol: "BTC",
+    usd_rate: 5709.4,
+    btc_rate: 1.0
+  };
+  let ltc = {
+    id: "litecoin",
+    name: "Litecoin",
+    symbol: "LTC",
+    usd_rate: 60.75,
+    btc_rate: 0.010626
+  };
+  let neo = {
+    id: "neo",
+    name: "NEO",
+    symbol: "NEO",
+    usd_rate: 28.88,
+    btc_rate: 0.00503792
+  };
   let cryptos = [(btc.id, btc), (ltc.id, ltc), (neo.id, neo)];
 };
 
@@ -39,6 +58,7 @@ module Encode = {
       ("type", string "crypto"),
       ("id", string c.id),
       ("name", string c.name),
+      ("symbol", string c.symbol),
       ("usd_rate", float c.usd_rate),
       ("btc_rate", float c.btc_rate)
     ];
@@ -59,6 +79,7 @@ module Decode = {
   let crypto json => {
     id: field "id" string json,
     name: field "name" string json,
+    symbol: field "symbol" string json,
     usd_rate: field "usd_rate" float json,
     btc_rate: field "btc_rate" float json
   };

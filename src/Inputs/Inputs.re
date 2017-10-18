@@ -6,19 +6,16 @@ module Button = {
   let component = ReasonReact.statelessComponent "Button";
   let make ::value ::onClick _children => {
     ...component,
-    render: fun _self =>
-      <div className="button"> <button onClick> (se value) </button> </div>
+    render: fun _self => <button onClick> (se value) </button>
   };
 };
 
 module ActionButton = {
   let component = ReasonReact.statelessComponent "ActionButton";
-  let make ::value ::onClick _children => {
+  let make ::image ::onClick _children => {
     ...component,
     render: fun _self =>
-      <div className="button action">
-        <button onClick> (se value) </button>
-      </div>
+      <button className="action" onClick> <img src=image /> </button>
   };
 };
 
@@ -26,10 +23,7 @@ module Number = {
   let component = ReasonReact.statelessComponent "NumberInput";
   let make ::value ::onChange ::placeholder="" _children => {
     ...component,
-    render: fun _self =>
-      <div className="input number">
-        <input _type="number" value onChange placeholder />
-      </div>
+    render: fun _self => <input _type="number" value onChange placeholder />
   };
 };
 
@@ -46,16 +40,14 @@ module Select = {
              fun (value, text) => <option key=value value> (se text) </option>
            )
         |> le;
-      <div className="input select">
-        <select value onChange>
-          (
-            selectText == "" ?
-              ReasonReact.nullElement :
-              <option disabled=Js.true_ value=""> (se selectText) </option>
-          )
-          options
-        </select>
-      </div>
+      <select value onChange>
+        (
+          selectText == "" ?
+            ReasonReact.nullElement :
+            <option disabled=Js.true_ value=""> (se selectText) </option>
+        )
+        options
+      </select>
     }
   };
 };
@@ -71,7 +63,16 @@ module Date = {
         | [date] => onChange (timestamp_of_date date)
         | _ => raise WrongDateSelection
         };
-      <div className="input"> <Flatpickr onChange=handleChange /> </div>
+      <Flatpickr className="input" onChange=handleChange />
     }
+  };
+};
+
+module CurrencyInput = {
+  let component = ReasonReact.statelessComponent "CurrencyInput";
+  let make ::crypto ::cash _children => {
+    ...component,
+    render: fun _self =>
+      <Aux> crypto <div className="divider"> (se "OR") </div> cash </Aux>
   };
 };

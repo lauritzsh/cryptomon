@@ -22,29 +22,17 @@ module SellForm = {
 
 module DepositForm = {
   let component = ReasonReact.statelessComponent "SellForm";
-  let make ::cashInput ::cryptoInput ::receivedInput _children => {
+  let make ::currencyInput ::receivedInput _children => {
     ...component,
-    render: fun _self =>
-      <Aux>
-        receivedInput
-        cashInput
-        <div className="divider"> (se "or") </div>
-        cryptoInput
-      </Aux>
+    render: fun _self => <Aux> receivedInput currencyInput </Aux>
   };
 };
 
 module WithdrawForm = {
   let component = ReasonReact.statelessComponent "SellForm";
-  let make ::cashInput ::cryptoInput ::spendInput _children => {
+  let make ::currencyInput ::spendInput _children => {
     ...component,
-    render: fun _self =>
-      <Aux>
-        spendInput
-        cashInput
-        <div className="divider"> (se "or") </div>
-        cryptoInput
-      </Aux>
+    render: fun _self => <Aux> spendInput currencyInput </Aux>
   };
 };
 
@@ -153,45 +141,61 @@ let make ::cryptos ::cashes ::onSubmit _children => {
           state: {kind, received, spend, crypto, cash, from, _to, timestamp}
         } => {
     let receivedInput =
-      <Inputs.Number
-        value=received
-        onChange=(reduce changeReceived)
-        placeholder="Received"
-      />;
+      <div className="received">
+        <Inputs.Number
+          value=received
+          onChange=(reduce changeReceived)
+          placeholder="Received"
+        />
+      </div>;
     let spendInput =
-      <Inputs.Number
-        value=spend
-        onChange=(reduce changeSpend)
-        placeholder="Spend"
-      />;
+      <div className="spend">
+        <Inputs.Number
+          value=spend
+          onChange=(reduce changeSpend)
+          placeholder="Spend"
+        />
+      </div>;
     let cryptoInput =
-      <Inputs.Select
-        value=crypto
-        onChange=(reduce changeCrypto)
-        options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
-        selectText="Select crypto"
-      />;
+      <div className="crypto">
+        <Inputs.Select
+          value=crypto
+          onChange=(reduce changeCrypto)
+          options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+          selectText="Select crypto"
+        />
+      </div>;
     let cashInput =
-      <Inputs.Select
-        value=cash
-        onChange=(reduce changeCash)
-        options=(List.map (fun (id, _) => (id, sup id)) cashes)
-        selectText="Select cash"
-      />;
+      <div className="cash">
+        <Inputs.Select
+          value=cash
+          onChange=(reduce changeCash)
+          options=(List.map (fun (id, _) => (id, sup id)) cashes)
+          selectText="Select cash"
+        />
+      </div>;
+    let currencyInput =
+      <div className="currency">
+        <Inputs.CurrencyInput crypto=cryptoInput cash=cashInput />
+      </div>;
     let fromInput =
-      <Inputs.Select
-        value=from
-        onChange=(reduce changeFrom)
-        options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
-        selectText="Select crypto"
-      />;
+      <div className="from">
+        <Inputs.Select
+          value=from
+          onChange=(reduce changeFrom)
+          options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+          selectText="Select crypto"
+        />
+      </div>;
     let toInput =
-      <Inputs.Select
-        value=_to
-        onChange=(reduce changeTo)
-        options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
-        selectText="Select crypto"
-      />;
+      <div className="to">
+        <Inputs.Select
+          value=_to
+          onChange=(reduce changeTo)
+          options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+          selectText="Select crypto"
+        />
+      </div>;
     let handleSubmit _event => {
       open! Transaction;
       open! Currency;
@@ -222,30 +226,39 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         )
       }
     };
-    <div className="transaction-form">
-      <Inputs.Select
-        value=(string_of_kind kind)
-        onChange=(reduce changeKind)
-        options=[
-          ("buy", "Buy"),
-          ("sell", "Sell"),
-          ("deposit", "Deposit"),
-          ("withdraw", "Withdraw"),
-          ("exchange", "Exchange")
-        ]
-      />
+    <div className=("transaction-form " ^ string_of_kind kind)>
+      <div className="kind">
+        <Inputs.Select
+          value=(string_of_kind kind)
+          onChange=(reduce changeKind)
+          options=[
+            ("buy", "Buy"),
+            ("sell", "Sell"),
+            ("deposit", "Deposit"),
+            ("withdraw", "Withdraw"),
+            ("exchange", "Exchange")
+          ]
+        />
+      </div>
       (
         switch kind {
         | Buy => <BuyForm cashInput cryptoInput receivedInput spendInput />
         | Sell => <SellForm cashInput cryptoInput receivedInput spendInput />
-        | Deposit => <DepositForm cashInput cryptoInput receivedInput />
-        | Withdraw => <WithdrawForm cashInput cryptoInput spendInput />
+        | Deposit => <DepositForm currencyInput receivedInput />
+        | Withdraw => <WithdrawForm currencyInput spendInput />
         | Exchange =>
           <ExchangeForm fromInput receivedInput spendInput toInput />
         }
       )
-      <Inputs.Date onChange=(reduce changeTimestamp) />
-      <Inputs.ActionButton value="+" onClick=handleSubmit />
+      <div className="timestamp">
+        <Inputs.Date onChange=(reduce changeTimestamp) />
+      </div>
+      <div className="add">
+        <Inputs.ActionButton
+          image=(loadResource "./add.png")
+          onClick=handleSubmit
+        />
+      </div>
     </div>
   }
 };

@@ -5,7 +5,7 @@
   border-color: var(--primary-color);
 
   &:hover {
-    background: var(--secondary-color);
-    border-color: var(--secondary-color);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
   }
 }

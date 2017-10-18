@@ -1,0 +1,17 @@
+@import '../index/properties.css';
+
+.tutorial {
+  width: 660px;
+  margin: 0 auto;
+  color: color(var(--black) alpha(75%));
+  margin-bottom: calc(var(--spacing) * 4);
+
+  & .intro {
+    text-align: justify;
+  }
+
+  & .title {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -5,7 +5,8 @@ loadCSS "./App.css";
 type state = {
   transactions: list Transaction.transaction,
   cashes: list (string, Currency.cash),
-  cryptos: list (string, Currency.crypto)
+  cryptos: list (string, Currency.crypto),
+  showTutorial: bool
 };
 
 type action =
@@ -26,7 +27,8 @@ module Encode = {
       (
         "cryptos",
         (list Currency.Encode.crypto) (List.map (fun (_, c) => c) s.cryptos)
-      )
+      ),
+      ("showTutorial", Js.Boolean.to_js_boolean s.showTutorial |> boolean)
     ];
 };
 
@@ -42,7 +44,8 @@ module Decode = {
     cashes:
       json
       |> field "cashes" (list Currency.Decode.cash)
-      |> List.map (fun (cash: Currency.cash) => (cash.id, cash))
+      |> List.map (fun (cash: Currency.cash) => (cash.id, cash)),
+    showTutorial: field "showTutorial" bool json
   };
 };
 
@@ -63,7 +66,12 @@ let persist ({state}: ReasonReact.self state 'a action) =>
 let initialState () =>
   switch (Dom.Storage.getItem "state" Dom.Storage.localStorage) {
   | Some state => state |> Js.Json.parseExn |> Decode.state
-  | None => {transactions: [], cashes: Currency.Data.cashes, cryptos: []}
+  | None => {
+      transactions: [],
+      cashes: Currency.Data.cashes,
+      cryptos: [],
+      showTutorial: true
+    }
   };
 
 let receiveCashes cashes => ReceiveCashes cashes;
@@ -108,21 +116,38 @@ let make _children => {
         persist
     | Add transaction =>
       ReasonReact.UpdateWithSideEffects
-        {...state, transactions: [transaction, ...state.transactions]} persist
+        {
+          ...state,
+          showTutorial: false,
+          transactions: [transaction, ...state.transactions]
+        }
+        persist
     | Delete transaction =>
       let transactions =
         List.filter (fun txn => txn !== transaction) state.transactions;
       ReasonReact.UpdateWithSideEffects {...state, transactions} persist
     },
-  render: fun {reduce, state: {transactions, cryptos, cashes}} =>
+  render: fun {reduce, state: {transactions, cryptos, cashes, showTutorial}} =>
     loading cryptos cashes ?
-      <div className="app"> <h1> (se "Loading...") </h1> </div> :
+      <Aux>
+        <div className="header" />
+        <div className="loader"> <h1> (se "Getting data...") </h1> </div>
+      </Aux> :
       <div className="app">
-        <TransactionForm cryptos cashes onSubmit=(reduce add) />
-        <Portfolio cryptos transactions />
-        <TransactionTable
-          transactions
-          onDelete=(fun transaction => reduce (delete transaction))
-        />
+        <div className="header" />
+        <div className="body">
+          (
+            showTutorial ?
+              <Tutorial cryptos cashes onSubmit=(reduce add) /> :
+              <Aux>
+                <TransactionForm cryptos cashes onSubmit=(reduce add) />
+                <Portfolio cryptos transactions />
+                <TransactionTable
+                  transactions
+                  onDelete=(fun transaction => reduce (delete transaction))
+                />
+              </Aux>
+          )
+        </div>
       </div>
 };

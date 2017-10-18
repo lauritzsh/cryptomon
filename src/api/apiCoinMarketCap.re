@@ -6,6 +6,7 @@ module Decode = {
   let crypto json => {
     id: field "id" string json,
     name: field "name" string json,
+    symbol: field "symbol" string json,
     usd_rate: field "price_usd" string json |> fs,
     btc_rate: field "price_btc" string json |> fs
   };

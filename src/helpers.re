@@ -1,5 +1,7 @@
 external loadCSS : string => unit = "require" [@@bs.val];
 
+external loadResource : string => string = "require" [@@bs.val];
+
 type date;
 
 external create_date : float => date = "Date" [@@bs.new];

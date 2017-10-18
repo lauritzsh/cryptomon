@@ -18,7 +18,7 @@ let make ::transactions ::onDelete _children => {
       <table>
         <thead>
           <tr>
-            <th />
+            <th className="kind" />
             <th> (se "Spend") </th>
             <th> (se "Received") </th>
             <th> (se "When") </th>

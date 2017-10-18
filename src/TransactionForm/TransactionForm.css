@@ -1,6 +1,59 @@
+@import '../index/properties.css';
+
 .transaction-form {
   display: flex;
-  margin: 0 -1em;
   align-items: center;
-  margin-bottom: 3rem;
+
+  margin-bottom: var(--section-spacing);
+
+  &.buy,
+  &.sell,
+  &.exchange {
+    & .kind,
+    & .received,
+    & .spend,
+    & .crypto,
+    & .cash,
+    & .from,
+    & .to,
+    & .add {
+      lost-column: 1/8;
+    }
+
+    & .timestamp {
+      lost-column: 2/8;
+    }
+  }
+
+  &.deposit,
+  &.withdraw {
+    & .kind,
+    & .received,
+    & .spend,
+    & .add {
+      lost-column: 1/8;
+    }
+
+    & .timestamp {
+      lost-column: 2/8;
+    }
+
+    & .currency {
+      display: flex;
+      align-items: center;
+      lost-column: 3/8;
+
+      & .divider {
+        text-align: center;
+        font-size: 8px;
+        color: rgba(0, 0, 0, 0.5);
+        lost-column: 1/15;
+      }
+
+      & .crypto,
+      & .cash {
+        lost-column: 7/15;
+      }
+    }
+  }
 }

@@ -1,19 +1,18 @@
 @import 'properties.css';
 
 @lost flexbox flex;
+@lost gutter var(--spacing);
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+}
+
 body {
+  background: var(--white);
   margin: 0;
-  padding: 1em;
-  background-image: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
-  );
-  background-attachment: fixed;
-  font-family: sans-serif;
+  font-family: 'Avenir Next', sans-serif;
 }

@@ -1,7 +1,24 @@
 :root {
-  --primary-color: #a18cd1;
-  --secondary-color: #a6c1ee;
+  --black: #252a34;
+  --white: white;
+
+  --primary-color: var(--black);
 
   --positive-color: #4ccd70;
   --negative-color: #ffcfdf;
+
+  --small-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2),
+    0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  --large-shadow: 0 1px 5px rgba(0, 0, 0, 0.1), 0 3px 8px rgba(0, 0, 0, 0.2),
+    0 0 1px rgba(0, 0, 0, 0.4);
+
+  --text-color: #252a34;
+  --text-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.5);
+
+  --border-radius: 0.2rem;
+  --border-color: color(var(--primary-color) alpha(20%));
+  --border-color-focus: color(var(--primary-color) alpha(60%));
+
+  --spacing: 1rem;
+  --section-spacing: calc(var(--spacing) * 4);
 }
