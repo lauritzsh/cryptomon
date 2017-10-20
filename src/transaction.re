@@ -34,13 +34,19 @@ module Data = {
 
 module Encode = {
   open! Json.Encode;
-  let kind m =>
+  let la (cryptos: list (string, Currency.crypto)) cryptoId =>
+    List.assoc cryptoId cryptos;
+  let currency' (cryptos: list (string, Currency.crypto)) =>
+    fun
+    | Cash cash => Currency.Encode.cash cash
+    | Crypto crypto => Currency.Encode.crypto (la cryptos crypto.id);
+  let kind (cryptos: list (string, Currency.crypto)) m =>
     switch m {
     | Buy cash spend crypto received =>
       object_ [
         ("type", string "buy"),
         ("cash", Currency.Encode.cash cash),
-        ("crypto", Currency.Encode.crypto crypto),
+        ("crypto", Currency.Encode.crypto (la cryptos crypto.id)),
         ("received", float received),
         ("spend", float spend)
       ]
@@ -48,36 +54,36 @@ module Encode = {
       object_ [
         ("type", string "sell"),
         ("cash", Currency.Encode.cash cash),
-        ("crypto", Currency.Encode.crypto crypto),
+        ("crypto", Currency.Encode.crypto (la cryptos crypto.id)),
         ("received", float received),
         ("spend", float spend)
       ]
     | Deposit currency received =>
       object_ [
         ("type", string "deposit"),
-        ("currency", Currency.Encode.currency currency),
+        ("currency", currency' cryptos currency),
         ("received", float received)
       ]
     | Withdraw currency spend =>
       object_ [
         ("type", string "withdraw"),
-        ("currency", Currency.Encode.currency currency),
+        ("currency", currency' cryptos currency),
         ("spend", float spend)
       ]
     | Exchange from spend _to received =>
       object_ [
         ("type", string "exchange"),
-        ("from", Currency.Encode.crypto from),
-        ("to", Currency.Encode.crypto _to),
+        ("from", Currency.Encode.crypto (la cryptos from.id)),
+        ("to", Currency.Encode.crypto (la cryptos _to.id)),
         ("received", float received),
         ("spend", float spend)
       ]
     };
-  let transaction t =>
+  let transaction (cryptos: list (string, Currency.crypto)) t =>
     object_ [
       ("timestamp", float t.timestamp),
       ("note", string t.note),
-      ("kind", kind t.kind)
+      ("kind", kind cryptos t.kind)
     ];
 };
 

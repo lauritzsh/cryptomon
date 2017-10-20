@@ -2,6 +2,10 @@ external loadCSS : string => unit = "require" [@@bs.val];
 
 external loadResource : string => string = "require" [@@bs.val];
 
+external fixed : float => int => string = "toFixed" [@@bs.send];
+
+external inf : float = "Infinity" [@@bs.val];
+
 type date;
 
 external create_date : float => date = "Date" [@@bs.new];

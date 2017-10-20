@@ -8,6 +8,9 @@ let format symbol amount => symbol ^ " " ^ sf amount |> se;
 
 let kind letter => <td> <div className="kind"> (se letter) </div> </td>;
 
+let pctGrowth spend worth =>
+  (worth -. spend) /. spend *. 100.0 |> (fun n => fixed n 2) |> fs;
+
 module BuyRow = {
   open Currency;
   open Transaction;
@@ -17,11 +20,16 @@ module BuyRow = {
     render: fun _self =>
       switch transaction.kind {
       | Buy cash spend crypto received =>
+        let growth =
+          pctGrowth (cash.usd_rate *. spend) (crypto.usd_rate *. received);
         <Aux>
           (kind "B")
           <td> (format cash.id spend) </td>
           <td> (format crypto.symbol received) </td>
           <td> (st transaction.timestamp |> se) </td>
+          <td className=("growth " ^ (growth >= 0.0 ? "up" : "down"))>
+            (growth |> sf |> (^) "% " |> se)
+          </td>
         </Aux>
       | _ => raise UnknownTransaction
       }
@@ -42,6 +50,7 @@ module SellRow = {
           <td> (format crypto.symbol spend) </td>
           <td> (format cash.id received) </td>
           <td> (st transaction.timestamp |> se) </td>
+          <td />
         </Aux>
       | _ => raise UnknownTransaction
       }
@@ -67,6 +76,7 @@ module DepositRow = {
           <td />
           <td> td </td>
           <td> (st transaction.timestamp |> se) </td>
+          <td />
         </Aux>
       | _ => raise UnknownTransaction
       }
@@ -92,6 +102,7 @@ module WithdrawRow = {
           <td> td </td>
           <td />
           <td> (st transaction.timestamp |> se) </td>
+          <td />
         </Aux>
       | _ => raise UnknownTransaction
       }
@@ -112,6 +123,7 @@ module ExchangeRow = {
           <td> (format from.symbol spend) </td>
           <td> (format to'.symbol received) </td>
           <td> (st transaction.timestamp |> se) </td>
+          <td />
         </Aux>
       | _ => raise UnknownTransaction
       }

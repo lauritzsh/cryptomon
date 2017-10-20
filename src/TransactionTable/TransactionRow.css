@@ -11,4 +11,17 @@ td {
     float: right;
     padding-right: var(--spacing);
   }
+
+  &.growth {
+    text-align: right;
+    font-weight: 500;
+  }
+
+  &.growth.up {
+    color: var(--positive-color);
+  }
+
+  &.growth.down {
+    color: var(--negative-color);
+  }
 }

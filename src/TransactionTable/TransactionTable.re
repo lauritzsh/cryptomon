@@ -23,6 +23,7 @@ let make ::transactions ::onDelete _children => {
             <th> (se "Received") </th>
             <th> (se "When") </th>
             <th />
+            <th />
           </tr>
         </thead>
         <tbody> (le tbody) </tbody>

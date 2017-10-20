@@ -19,7 +19,10 @@ module Encode = {
   open! Json.Encode;
   let state s =>
     object_ [
-      ("transactions", (list Transaction.Encode.transaction) s.transactions),
+      (
+        "transactions",
+        (list (Transaction.Encode.transaction s.cryptos)) s.transactions
+      ),
       (
         "cashes",
         (list Currency.Encode.cash) (List.map (fun (_, c) => c) s.cashes)

@@ -13,15 +13,41 @@
     transition: opacity 1s;
 
     lost-column: 1/4;
+    margin-bottom: var(--spacing);
     padding: var(--spacing);
     background: var(--primary-color);
     color: var(--white);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
 
-    & .name {
-      font-weight: 700;
+    & .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       margin: 0 0 calc(var(--spacing) / 2) 0;
+    }
+
+    & .name {
+      lost-column: 5/8;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    & .down,
+    & .up {
+      lost-column: 3/8;
+      text-align: right;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    & .up {
+      color: var(--positive-color);
+    }
+
+    & .down {
+      color: var(--negative-color);
     }
 
     & .value {
