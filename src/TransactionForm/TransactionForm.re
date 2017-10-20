@@ -196,6 +196,18 @@ let make ::cryptos ::cashes ::onSubmit _children => {
           selectText="Select crypto"
         />
       </div>;
+    let validNum received => received != "" && fs received > 0.;
+    let isValid =
+      switch kind {
+      | Buy =>
+        crypto != "" && validNum received && cash != "" && validNum spend
+      | Sell =>
+        crypto != "" && validNum received && cash != "" && validNum spend
+      | Deposit => (crypto != "" || cash != "") && validNum received
+      | Withdraw => (crypto != "" || cash != "") && validNum spend
+      | Exchange =>
+        from != "" && _to != "" && validNum received && validNum spend
+      };
     let handleSubmit _event => {
       open! Transaction;
       open! Currency;
@@ -255,7 +267,8 @@ let make ::cryptos ::cashes ::onSubmit _children => {
       </div>
       <div className="add">
         <Inputs.ActionButton
-          image=(loadResource "./add.png")
+          disabled=(not isValid)
+          image=(loadResource "./add.svg")
           onClick=handleSubmit
         />
       </div>

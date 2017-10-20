@@ -8,6 +8,7 @@ td {
   }
 
   &:last-child {
+    float: right;
     padding-right: var(--spacing);
   }
 }

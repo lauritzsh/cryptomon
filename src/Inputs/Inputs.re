@@ -4,18 +4,26 @@ loadCSS "./Inputs.css";
 
 module Button = {
   let component = ReasonReact.statelessComponent "Button";
-  let make ::value ::onClick _children => {
+  let make ::value ::onClick ::disabled=false _children => {
     ...component,
-    render: fun _self => <button onClick> (se value) </button>
+    render: fun _self =>
+      <button disabled=(Js.Boolean.to_js_boolean disabled) onClick>
+        (se value)
+      </button>
   };
 };
 
 module ActionButton = {
   let component = ReasonReact.statelessComponent "ActionButton";
-  let make ::image ::onClick _children => {
+  let make ::image ::onClick ::squared=false ::disabled=false _children => {
     ...component,
     render: fun _self =>
-      <button className="action" onClick> <img src=image /> </button>
+      <button
+        className=("action" ^ (if squared {" squared"} else {""}))
+        disabled=(Js.Boolean.to_js_boolean disabled)
+        onClick>
+        <img src=image />
+      </button>
   };
 };
 

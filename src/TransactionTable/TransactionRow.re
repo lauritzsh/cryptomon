@@ -135,7 +135,8 @@ let make transaction::(txn: Transaction.transaction) ::onDelete _children => {
       )
       <td>
         <Inputs.ActionButton
-          image=(loadResource "./remove.png")
+          squared=true
+          image=(loadResource "./remove.svg")
           onClick=onDelete
         />
       </td>

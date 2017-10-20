@@ -24,13 +24,28 @@ select {
   text-indent: -14px;
 }
 
-button.action {
-  background: var(--primary-color);
+button {
+  &.squared {
+    width: initial;
+    padding: 0.5rem 0.6rem;
+  }
 
-  & img {
-    filter: brightness(0) invert(1);
-    width: 10px;
-    height: 10px;
+  &.action {
+    cursor: pointer;
+    background: var(--primary-color);
+    transition: background 0.5s;
+
+    &:disabled {
+      cursor: not-allowed;
+      background: color(var(--primary-color) w(50%));
+      transition: background 0.5s;
+    }
+
+    & img {
+      filter: brightness(0) invert(1);
+      width: 10px;
+      height: 10px;
+    }
   }
 }
 
