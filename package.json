@@ -2,6 +2,7 @@
   "name": "cryptomon",
   "version": "0.1.0",
   "private": true,
+  "engines": { "node": ">=8.6.0" },
   "dependencies": {
     "autoprefixer": "7.1.1",
     "babel-core": "6.25.0",
@@ -61,15 +62,9 @@
     "reason-react": "^0.2.4"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{re,ml}"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
-    "testMatch": [
-      "<rootDir>/src/**/*test.{ml,re,js}"
-    ],
+    "collectCoverageFrom": ["src/**/*.{re,ml}"],
+    "setupFiles": ["<rootDir>/config/polyfills.js"],
+    "testMatch": ["<rootDir>/src/**/*test.{ml,re,js}"],
     "moduleFileExtensions": [
       "re",
       "ml",
@@ -85,16 +80,15 @@
       "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^.+\\.(re|ml)$": "bs-loader",
-      "^(?!.*\\.(js|jsx|css|json|re|ml)$)": "<rootDir>/config/jest/fileTransform.js"
+      "^(?!.*\\.(js|jsx|css|json|re|ml)$)":
+        "<rootDir>/config/jest/fileTransform.js"
     },
     "transformIgnorePatterns": [
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|re|ml)$"
     ]
   },
   "babel": {
-    "presets": [
-      "react-app"
-    ]
+    "presets": ["react-app"]
   },
   "eslintConfig": {
     "extends": "react-app"
