@@ -17,6 +17,26 @@ type t = {
   kind
 };
 
+module Sample = {
+  let data = [
+    {
+      timestamp: 1508772600000.0,
+      note: "",
+      kind: Exchange "bitcoin" 0.045 "litecoin" 5.0
+    },
+    {
+      timestamp: 1508771700000.0,
+      note: "",
+      kind: Buy "usd" 400.0 "ethereum" 1.0
+    },
+    {
+      timestamp: 1508770800000.0,
+      note: "",
+      kind: Buy "usd" 4500.0 "bitcoin" 1.0
+    }
+  ];
+};
+
 module Encode = {
   open! Json.Encode;
   let currency' =

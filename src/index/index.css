@@ -16,3 +16,7 @@ body {
   margin: 0;
   font-family: 'Avenir Next', sans-serif;
 }
+
+a {
+  color: var(--black);
+}

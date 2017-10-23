@@ -10,6 +10,7 @@ type state = {
 };
 
 type action =
+  | Sample
   | ReceiveCashes (list Currency.Cash.t)
   | ReceiveCryptos (list Currency.Crypto.t)
   | Add Transaction.t
@@ -71,6 +72,8 @@ let receiveCryptos cryptos => ReceiveCryptos cryptos;
 
 let add (kind, timestamp) => Add {timestamp, note: "", kind};
 
+let sample _event => Sample;
+
 let delete transaction _event => Delete transaction;
 
 let loading cryptos cashes =>
@@ -82,7 +85,6 @@ let make _children => {
   ...component,
   initialState,
   didMount: fun self => {
-    persist self;
     Api.Cash.fetch (self.reduce receiveCashes);
     Api.Crypto.fetch (self.reduce receiveCryptos);
     ReasonReact.NoUpdate
@@ -90,6 +92,14 @@ let make _children => {
   reducer: fun action state =>
     Currency.(
       switch action {
+      | Sample =>
+        ReasonReact.UpdateWithSideEffects
+          {
+            ...state,
+            showTutorial: false,
+            transactions: Transaction.Sample.data
+          }
+          persist
       | ReceiveCashes cashes =>
         ReasonReact.UpdateWithSideEffects
           {
@@ -130,7 +140,12 @@ let make _children => {
         <div className="body">
           (
             showTutorial ?
-              <Tutorial cryptos cashes onSubmit=(reduce add) /> :
+              <Tutorial
+                cashes
+                cryptos
+                onSampleClick=(reduce sample)
+                onSubmit=(reduce add)
+              /> :
               <Aux>
                 <TransactionForm cryptos cashes onSubmit=(reduce add) />
                 <Portfolio cryptos cashes transactions />
