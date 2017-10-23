@@ -4,14 +4,16 @@ loadCSS "./TransactionTable.css";
 
 let component = ReasonReact.statelessComponent "TransactionTable";
 
-let make ::transactions ::onDelete _children => {
+let make ::cashes ::cryptos ::onDelete ::transactions _children => {
   ...component,
   render: fun _self => {
     let tr i transaction =>
       <TransactionRow
+        cashes
+        cryptos
         key=(si i)
-        transaction
         onDelete=(onDelete transaction)
+        transaction
       />;
     let tbody = List.mapi tr transactions;
     <div className="transaction-table">

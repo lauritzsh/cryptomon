@@ -140,6 +140,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
           reduce,
           state: {kind, received, spend, crypto, cash, from, _to, timestamp}
         } => {
+    open Currency;
     let receivedInput =
       <div className="received">
         <Inputs.Number
@@ -161,7 +162,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         <Inputs.Select
           value=crypto
           onChange=(reduce changeCrypto)
-          options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+          options=(List.map Crypto.(fun (id, {name}) => (id, name)) cryptos)
           selectText="Select crypto"
         />
       </div>;
@@ -183,7 +184,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         <Inputs.Select
           value=from
           onChange=(reduce changeFrom)
-          options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+          options=(List.map Crypto.(fun (id, {name}) => (id, name)) cryptos)
           selectText="Select crypto"
         />
       </div>;
@@ -192,7 +193,7 @@ let make ::cryptos ::cashes ::onSubmit _children => {
         <Inputs.Select
           value=_to
           onChange=(reduce changeTo)
-          options=(List.map Currency.(fun (id, {name}) => (id, name)) cryptos)
+          options=(List.map Crypto.(fun (id, {name}) => (id, name)) cryptos)
           selectText="Select crypto"
         />
       </div>;
@@ -211,31 +212,17 @@ let make ::cryptos ::cashes ::onSubmit _children => {
     let handleSubmit _event => {
       open! Transaction;
       open! Currency;
-      let cash' () => List.assoc cash cashes;
       let spend' () => fs spend;
-      let crypto' () => List.assoc crypto cryptos;
       let received' () => fs received;
-      let from' () => List.assoc from cryptos;
-      let to' () => List.assoc _to cryptos;
-      let currency' () => crypto != "" ? Crypto (crypto' ()) : Cash (cash' ());
+      let currency' () => crypto != "" ? Crypto crypto : Cash cash;
       switch kind {
-      | Buy =>
-        onSubmit (
-          Buy (cash' ()) (spend' ()) (crypto' ()) (received' ()),
-          timestamp
-        )
+      | Buy => onSubmit (Buy cash (spend' ()) crypto (received' ()), timestamp)
       | Sell =>
-        onSubmit (
-          Sell (crypto' ()) (spend' ()) (cash' ()) (received' ()),
-          timestamp
-        )
+        onSubmit (Sell crypto (spend' ()) cash (received' ()), timestamp)
       | Deposit => onSubmit (Deposit (currency' ()) (received' ()), timestamp)
       | Withdraw => onSubmit (Withdraw (currency' ()) (spend' ()), timestamp)
       | Exchange =>
-        onSubmit (
-          Exchange (from' ()) (spend' ()) (to' ()) (received' ()),
-          timestamp
-        )
+        onSubmit (Exchange from (spend' ()) _to (received' ()), timestamp)
       }
     };
     <div className=("transaction-form " ^ string_of_kind kind)>

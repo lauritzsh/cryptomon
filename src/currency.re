@@ -1,59 +1,39 @@
-/* dollar, euro etc. */
-type cash = {
-  id: string, /* usd, eur etc. */
-  usd_rate: float
-};
-
-/* BTC, ETH etc. */
-type crypto = {
-  id: string, /* btc, eth etc. */
-  name: string, /* Bitcoin, Ethereum etc. */
-  symbol: string, /* BTC, ETH etc. */
-  usd_rate: float,
-  btc_rate: float
-};
-
-type currency =
-  | Cash cash
-  | Crypto crypto;
-
-/* Sample data for development */
-module Data = {
-  let usd = {id: "usd", usd_rate: 1.0};
-  let cashes = [(usd.id, usd)];
-  let btc = {
-    id: "bitcoin",
-    name: "Bitcoin",
-    symbol: "BTC",
-    usd_rate: 5709.4,
-    btc_rate: 1.0
+module Cash = {
+  /* dollar, euro etc. */
+  type t = {
+    id: string, /* usd, eur etc. */
+    code: string, /* USD, EUR etc. */
+    usd_rate: float
   };
-  let ltc = {
-    id: "litecoin",
-    name: "Litecoin",
-    symbol: "LTC",
-    usd_rate: 60.75,
-    btc_rate: 0.010626
-  };
-  let neo = {
-    id: "neo",
-    name: "NEO",
-    symbol: "NEO",
-    usd_rate: 28.88,
-    btc_rate: 0.00503792
-  };
-  let cryptos = [(btc.id, btc), (ltc.id, ltc), (neo.id, neo)];
-};
-
-module Encode = {
+  type id = string;
   open! Json.Encode;
-  let cash (c: cash) =>
+  let encode c =>
     object_ [
       ("type", string "cash"),
       ("id", string c.id),
+      ("code", string c.code),
       ("usd_rate", float c.usd_rate)
     ];
-  let crypto c =>
+  open! Json.Decode;
+  let decode json => {
+    id: field "id" string json,
+    code: field "code" string json,
+    usd_rate: field "usd_rate" float json
+  };
+};
+
+module Crypto = {
+  /* BTC, ETH etc. */
+  type t = {
+    id: string, /* btc, eth etc. */
+    name: string, /* Bitcoin, Ethereum etc. */
+    symbol: string, /* BTC, ETH etc. */
+    usd_rate: float,
+    btc_rate: float
+  };
+  type id = string;
+  open! Json.Encode;
+  let encode c =>
     object_ [
       ("type", string "crypto"),
       ("id", string c.id),
@@ -62,31 +42,35 @@ module Encode = {
       ("usd_rate", float c.usd_rate),
       ("btc_rate", float c.btc_rate)
     ];
-  let currency c =>
-    switch c {
-    | Crypto crypto' => crypto crypto'
-    | Cash cash' => cash cash'
-    };
-};
-
-module Decode = {
   open! Json.Decode;
-  exception DecodeException string;
-  let cash json => {
-    id: field "id" string json,
-    usd_rate: field "usd_rate" float json
-  };
-  let crypto json => {
+  let decode json => {
     id: field "id" string json,
     name: field "name" string json,
     symbol: field "symbol" string json,
     usd_rate: field "usd_rate" float json,
     btc_rate: field "btc_rate" float json
   };
+};
+
+type currency =
+  | Cash Cash.id
+  | Crypto Crypto.id;
+
+module Encode = {
+  let currency c =>
+    switch c {
+    | Crypto crypto_id => crypto_id
+    | Cash cash_id => cash_id
+    };
+};
+
+module Decode = {
+  open! Json.Decode;
+  exception DecodeException string;
   let currency json =>
     switch (field "type" string json) {
-    | "cash" => Cash (cash json)
-    | "crypto" => Crypto (crypto json)
+    | "cash" => Cash (field "id" string json)
+    | "crypto" => Crypto (field "id" string json)
     | currency => raise (DecodeException (currency ^ ": not found"))
     };
 };

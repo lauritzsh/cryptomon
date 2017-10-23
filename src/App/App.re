@@ -3,51 +3,44 @@ open Helpers;
 loadCSS "./App.css";
 
 type state = {
-  transactions: list Transaction.transaction,
-  cashes: list (string, Currency.cash),
-  cryptos: list (string, Currency.crypto),
+  transactions: list Transaction.t,
+  cashes: list (Currency.Cash.id, Currency.Cash.t),
+  cryptos: list (Currency.Crypto.id, Currency.Crypto.t),
   showTutorial: bool
 };
 
 type action =
-  | ReceiveCashes (list Currency.cash)
-  | ReceiveCryptos (list Currency.crypto)
-  | Add Transaction.transaction
-  | Delete Transaction.transaction;
+  | ReceiveCashes (list Currency.Cash.t)
+  | ReceiveCryptos (list Currency.Crypto.t)
+  | Add Transaction.t
+  | Delete Transaction.t;
 
 module Encode = {
   open! Json.Encode;
+  let snd (_, c) => c;
   let state s =>
     object_ [
-      (
-        "transactions",
-        (list (Transaction.Encode.transaction s.cryptos)) s.transactions
-      ),
-      (
-        "cashes",
-        (list Currency.Encode.cash) (List.map (fun (_, c) => c) s.cashes)
-      ),
-      (
-        "cryptos",
-        (list Currency.Encode.crypto) (List.map (fun (_, c) => c) s.cryptos)
-      ),
+      ("transactions", (list Transaction.Encode.transaction) s.transactions),
+      ("cashes", (list Currency.Cash.encode) (List.map snd s.cashes)),
+      ("cryptos", (list Currency.Crypto.encode) (List.map snd s.cryptos)),
       ("showTutorial", Js.Boolean.to_js_boolean s.showTutorial |> boolean)
     ];
 };
 
 module Decode = {
+  open Currency;
   open! Json.Decode;
   let state json => {
     transactions:
       field "transactions" (list Transaction.Decode.transaction) json,
     cryptos:
       json
-      |> field "cryptos" (list Currency.Decode.crypto)
-      |> List.map Currency.(fun crypto => (crypto.id, crypto)),
+      |> field "cryptos" (list Currency.Crypto.decode)
+      |> List.map Crypto.(fun crypto => (crypto.id, crypto)),
     cashes:
       json
-      |> field "cashes" (list Currency.Decode.cash)
-      |> List.map (fun (cash: Currency.cash) => (cash.id, cash)),
+      |> field "cashes" (list Currency.Cash.decode)
+      |> List.map Cash.(fun cash => (cash.id, cash)),
     showTutorial: field "showTutorial" bool json
   };
 };
@@ -69,12 +62,7 @@ let persist ({state}: ReasonReact.self state 'a action) =>
 let initialState () =>
   switch (Dom.Storage.getItem "state" Dom.Storage.localStorage) {
   | Some state => state |> Js.Json.parseExn |> Decode.state
-  | None => {
-      transactions: [],
-      cashes: Currency.Data.cashes,
-      cryptos: [],
-      showTutorial: true
-    }
+  | None => {transactions: [], cashes: [], cryptos: [], showTutorial: true}
   };
 
 let receiveCashes cashes => ReceiveCashes cashes;
@@ -100,36 +88,37 @@ let make _children => {
     ReasonReact.NoUpdate
   },
   reducer: fun action state =>
-    switch action {
-    | ReceiveCashes cashes =>
-      ReasonReact.UpdateWithSideEffects
-        {
-          ...state,
-          cashes:
-            List.map (fun (cash: Currency.cash) => (cash.id, cash)) cashes
-        }
-        persist
-    | ReceiveCryptos cryptos =>
-      ReasonReact.UpdateWithSideEffects
-        {
-          ...state,
-          cryptos:
-            List.map Currency.(fun crypto => (crypto.id, crypto)) cryptos
-        }
-        persist
-    | Add transaction =>
-      ReasonReact.UpdateWithSideEffects
-        {
-          ...state,
-          showTutorial: false,
-          transactions: [transaction, ...state.transactions]
-        }
-        persist
-    | Delete transaction =>
-      let transactions =
-        List.filter (fun txn => txn !== transaction) state.transactions;
-      ReasonReact.UpdateWithSideEffects {...state, transactions} persist
-    },
+    Currency.(
+      switch action {
+      | ReceiveCashes cashes =>
+        ReasonReact.UpdateWithSideEffects
+          {
+            ...state,
+            cashes: List.map Cash.(fun cash => (cash.id, cash)) cashes
+          }
+          persist
+      | ReceiveCryptos cryptos =>
+        ReasonReact.UpdateWithSideEffects
+          {
+            ...state,
+            cryptos:
+              List.map Crypto.(fun crypto => (crypto.id, crypto)) cryptos
+          }
+          persist
+      | Add transaction =>
+        ReasonReact.UpdateWithSideEffects
+          {
+            ...state,
+            showTutorial: false,
+            transactions: [transaction, ...state.transactions]
+          }
+          persist
+      | Delete transaction =>
+        let transactions =
+          List.filter (fun txn => txn !== transaction) state.transactions;
+        ReasonReact.UpdateWithSideEffects {...state, transactions} persist
+      }
+    ),
   render: fun {reduce, state: {transactions, cryptos, cashes, showTutorial}} =>
     loading cryptos cashes ?
       <Aux>
@@ -144,9 +133,11 @@ let make _children => {
               <Tutorial cryptos cashes onSubmit=(reduce add) /> :
               <Aux>
                 <TransactionForm cryptos cashes onSubmit=(reduce add) />
-                <Portfolio cryptos transactions />
+                <Portfolio cryptos cashes transactions />
                 <TransactionTable
                   transactions
+                  cashes
+                  cryptos
                   onDelete=(fun transaction => reduce (delete transaction))
                 />
               </Aux>

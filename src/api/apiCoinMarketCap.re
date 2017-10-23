@@ -1,7 +1,7 @@
 open Helpers;
 
 module Decode = {
-  open Currency;
+  open Currency.Crypto;
   open! Json.Decode;
   let crypto json => {
     id: field "id" string json,

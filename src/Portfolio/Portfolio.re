@@ -33,40 +33,52 @@ module PortfolioItem = {
   };
 };
 
-let make ::cryptos ::transactions _children => {
+let make ::cryptos ::cashes ::transactions _children => {
   ...component,
   render: fun _self => {
+    open Currency;
     open StringMap;
+    let la = List.assoc;
     let addOrUpdate f key default m =>
       add key (f (mem key m ? find key m : default)) m;
-    let updatePortfolio ({kind}: Transaction.transaction) p =>
+    let updatePortfolio ({kind}: Transaction.t) p =>
       switch kind {
-      | Buy cash spend crypto received =>
+      | Buy cash_id spend crypto_id received =>
         addOrUpdate
-          (fun (v, s) => (v +. received, spend *. cash.usd_rate +. s))
-          crypto.id
+          Cash.(
+            fun (v, s) => (
+              v +. received,
+              spend *. (la cash_id cashes).usd_rate +. s
+            )
+          )
+          crypto_id
           (0.0, 0.0)
           p
-      | Sell crypto spend cash received =>
+      | Sell crypto_id spend cash_id received =>
         addOrUpdate
-          (fun (v, s) => (v -. spend, received *. cash.usd_rate +. s))
-          crypto.id
+          Cash.(
+            fun (v, s) => (
+              v -. spend,
+              received *. (la cash_id cashes).usd_rate +. s
+            )
+          )
+          crypto_id
           (0.0, 0.0)
           p
-      | Deposit (Crypto crypto) received =>
-        addOrUpdate (fun (v, s) => (v +. received, s)) crypto.id (0.0, 0.0) p
+      | Deposit (Crypto crypto_id) received =>
+        addOrUpdate (fun (v, s) => (v +. received, s)) crypto_id (0.0, 0.0) p
       | Deposit (Cash _cash) _received => p
-      | Withdraw (Crypto crypto) spend =>
-        addOrUpdate (fun (v, s) => (v -. spend, s)) crypto.id (0.0, 0.0) p
+      | Withdraw (Crypto crypto_id) spend =>
+        addOrUpdate (fun (v, s) => (v -. spend, s)) crypto_id (0.0, 0.0) p
       | Withdraw (Cash _cash) _spend => p
-      | Exchange from spend _to received =>
+      | Exchange from_id spend to_id received =>
         p
-        |> addOrUpdate (fun (v, s) => (v -. spend, s)) from.id (0.0, 0.0)
-        |> addOrUpdate (fun (v, s) => (v +. received, s)) _to.id (0.0, 0.0)
+        |> addOrUpdate (fun (v, s) => (v -. spend, s)) from_id (0.0, 0.0)
+        |> addOrUpdate (fun (v, s) => (v +. received, s)) to_id (0.0, 0.0)
       };
     let portfolio = List.fold_right updatePortfolio transactions empty;
     let item (key, (amount, spend)) => {
-      let crypto: Currency.crypto = List.assoc key cryptos;
+      let crypto: Crypto.t = la key cryptos;
       let item = {name: crypto.name, amount, value: amount *. crypto.usd_rate};
       let change = fixed ((item.value -. spend) /. spend *. 100.) 2;
       <PortfolioItem key item change />

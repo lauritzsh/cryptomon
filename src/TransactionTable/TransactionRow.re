@@ -2,147 +2,78 @@ open Helpers;
 
 loadCSS "./TransactionRow.css";
 
-exception UnknownTransaction;
-
-let format symbol amount => symbol ^ " " ^ sf amount |> se;
+let format amount symbol => symbol ^ " " ^ sf amount |> se;
 
 let kind letter => <td> <div className="kind"> (se letter) </div> </td>;
 
-let pctGrowth spend worth =>
-  (worth -. spend) /. spend *. 100.0 |> (fun n => fixed n 2) |> fs;
-
-module BuyRow = {
-  open Currency;
-  open Transaction;
-  let component = ReasonReact.statelessComponent "BuyRow";
-  let make ::transaction _children => {
-    ...component,
-    render: fun _self =>
-      switch transaction.kind {
-      | Buy cash spend crypto received =>
-        let growth =
-          pctGrowth (cash.usd_rate *. spend) (crypto.usd_rate *. received);
-        <Aux>
-          (kind "B")
-          <td> (format cash.id spend) </td>
-          <td> (format crypto.symbol received) </td>
-          <td> (st transaction.timestamp |> se) </td>
-          <td className=("growth " ^ (growth >= 0.0 ? "up" : "down"))>
-            (growth |> sf |> (^) "% " |> se)
-          </td>
-        </Aux>
-      | _ => raise UnknownTransaction
-      }
-  };
-};
-
-module SellRow = {
-  open Currency;
-  open Transaction;
-  let component = ReasonReact.statelessComponent "SellRow";
-  let make ::transaction _children => {
-    ...component,
-    render: fun _self =>
-      switch transaction.kind {
-      | Sell crypto spend cash received =>
-        <Aux>
-          (kind "S")
-          <td> (format crypto.symbol spend) </td>
-          <td> (format cash.id received) </td>
-          <td> (st transaction.timestamp |> se) </td>
-          <td />
-        </Aux>
-      | _ => raise UnknownTransaction
-      }
-  };
-};
-
-module DepositRow = {
-  open Currency;
-  open Transaction;
-  let component = ReasonReact.statelessComponent "DepositRow";
-  let make ::transaction _children => {
-    ...component,
-    render: fun _self =>
-      switch transaction.kind {
-      | Deposit currency received =>
-        let td =
-          switch currency {
-          | Cash {id} => format id received
-          | Crypto {id} => format id received
-          };
-        <Aux>
-          (kind "D")
-          <td />
-          <td> td </td>
-          <td> (st transaction.timestamp |> se) </td>
-          <td />
-        </Aux>
-      | _ => raise UnknownTransaction
-      }
-  };
-};
-
-module WithdrawRow = {
-  open Currency;
-  open Transaction;
-  let component = ReasonReact.statelessComponent "WithdrawRow";
-  let make ::transaction _children => {
-    ...component,
-    render: fun _self =>
-      switch transaction.kind {
-      | Withdraw currency spend =>
-        let td =
-          switch currency {
-          | Cash {id} => format id spend
-          | Crypto {id} => format id spend
-          };
-        <Aux>
-          (kind "W")
-          <td> td </td>
-          <td />
-          <td> (st transaction.timestamp |> se) </td>
-          <td />
-        </Aux>
-      | _ => raise UnknownTransaction
-      }
-  };
-};
-
-module ExchangeRow = {
-  open Currency;
-  open Transaction;
-  let component = ReasonReact.statelessComponent "ExchangeRow";
-  let make ::transaction _children => {
-    ...component,
-    render: fun _self =>
-      switch transaction.kind {
-      | Exchange from spend to' received =>
-        <Aux>
-          (kind "E")
-          <td> (format from.symbol spend) </td>
-          <td> (format to'.symbol received) </td>
-          <td> (st transaction.timestamp |> se) </td>
-          <td />
-        </Aux>
-      | _ => raise UnknownTransaction
-      }
-  };
-};
-
 let component = ReasonReact.statelessComponent "TransactionRow";
 
-let make transaction::(txn: Transaction.transaction) ::onDelete _children => {
+let make ::transaction ::cashes ::cryptos ::onDelete _children => {
   ...component,
-  render: fun _self =>
+  render: fun _self => {
+    open Currency;
+    let code id => (List.assoc id cashes: Cash.t).code;
+    let symbol id => (List.assoc id cryptos: Crypto.t).symbol;
+    let name id => (List.assoc id cryptos: Crypto.t).name;
     <tr>
       (
-        switch txn.kind {
-        | Buy _ => <BuyRow transaction=txn />
-        | Sell _ => <SellRow transaction=txn />
-        | Deposit _ => <DepositRow transaction=txn />
-        | Withdraw _ => <WithdrawRow transaction=txn />
-        | Exchange _ => <ExchangeRow transaction=txn />
+        switch (transaction: Transaction.t).kind {
+        | Buy cash_id spend crypto_id received =>
+          <Aux>
+            (kind "B")
+            <td> (code cash_id |> format spend) </td>
+            <td title=(name crypto_id)>
+              (symbol crypto_id |> format received)
+            </td>
+            <td> (st transaction.timestamp |> se) </td>
+            <td />
+          </Aux>
+        | Sell crypto_id spend cash_id received =>
+          <Aux>
+            (kind "S")
+            <td title=(name crypto_id)>
+              (symbol crypto_id |> format spend)
+            </td>
+            <td> (code cash_id |> format received) </td>
+            <td> (st transaction.timestamp |> se) </td>
+            <td />
+          </Aux>
+        | Deposit currency received =>
+          <Aux>
+            (kind "D")
+            <td />
+            (
+              switch currency {
+              | Cash id => <td> (code id |> format received) </td>
+              | Crypto id =>
+                <td title=(name id)> (symbol id |> format received) </td>
+              }
+            )
+            <td> (st transaction.timestamp |> se) </td>
+            <td />
+          </Aux>
+        | Withdraw currency spend =>
+          <Aux>
+            (kind "W")
+            (
+              switch currency {
+              | Cash id => <td> (code id |> format spend) </td>
+              | Crypto id =>
+                <td title=(name id)> (symbol id |> format spend) </td>
+              }
+            )
+            <td />
+            <td> (st transaction.timestamp |> se) </td>
+            <td />
+          </Aux>
+        | Exchange from_id spend to_id received =>
+          <Aux>
+            (kind "E")
+            <td title=(name from_id)> (symbol from_id |> format spend) </td>
+            <td title=(name to_id)> (symbol to_id |> format received) </td>
+            <td> (st transaction.timestamp |> se) </td>
+            <td />
+          </Aux>
         }
       )
       <td>
@@ -153,4 +84,5 @@ let make transaction::(txn: Transaction.transaction) ::onDelete _children => {
         />
       </td>
     </tr>
+  }
 };
