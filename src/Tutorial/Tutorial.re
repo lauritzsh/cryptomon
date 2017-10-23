@@ -14,6 +14,8 @@ let make ::cryptos ::cashes ::onSampleClick ::onSubmit _children => {
           (
             se "Cryptomon is a simple tool that helps you keep track of cryptocurrencies and their values. "
           )
+        </p>
+        <p className="getting-started">
           (se "Get started by adding a transaction below or click ")
           <a href="#" onClick=onSampleClick> (se "here") </a>
           (se " to get sample data.")

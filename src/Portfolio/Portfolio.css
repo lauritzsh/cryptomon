@@ -2,23 +2,23 @@
 
 .portfolio {
   lost-flex-container: row;
-
-  margin-bottom: var(--section-spacing);
+  margin-bottom: var(--phone-section-spacing);
 
   & .portfolio-item {
+    lost-column: 1/1;
+
     animation-duration: 1s;
     animation-name: slidein;
 
     opacity: 1;
     transition: opacity 1s;
 
-    lost-column: 1/4;
-    margin-bottom: var(--spacing);
-    padding: var(--spacing);
     background: var(--primary-color);
     color: var(--white);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
+    margin-bottom: var(--spacing);
+    padding: var(--spacing);
 
     & .top {
       display: flex;
@@ -53,6 +53,24 @@
     & .value {
       font-weight: 200;
       margin: 0;
+    }
+  }
+}
+
+@media (--phone-ls) {
+  .portfolio .portfolio-item {
+    lost-column: 1/2;
+  }
+}
+
+@media (--tablet) {
+  .portfolio {
+    lost-flex-container: row;
+
+    margin-bottom: var(--section-spacing);
+
+    & .portfolio-item {
+      lost-column: 1/4;
     }
   }
 }

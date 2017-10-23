@@ -1,27 +1,29 @@
 @import '../index/properties.css';
 
-td {
-  padding: calc(var(--spacing) * 0.5) 0;
+@media (--tablet) {
+  td {
+    padding: calc(var(--spacing) * 0.5) 0;
 
-  &:first-child {
-    padding-left: var(--spacing);
-  }
+    &:first-child {
+      padding-left: var(--spacing);
+    }
 
-  &:last-child {
-    float: right;
-    padding-right: var(--spacing);
-  }
+    &:last-child {
+      float: right;
+      padding-right: var(--spacing);
+    }
 
-  &.growth {
-    text-align: right;
-    font-weight: 500;
-  }
+    &.growth {
+      text-align: right;
+      font-weight: 500;
+    }
 
-  &.growth.up {
-    color: var(--positive-color);
-  }
+    &.growth.up {
+      color: var(--positive-color);
+    }
 
-  &.growth.down {
-    color: var(--negative-color);
+    &.growth.down {
+      color: var(--negative-color);
+    }
   }
 }

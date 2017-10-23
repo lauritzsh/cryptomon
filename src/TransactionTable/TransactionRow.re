@@ -25,8 +25,6 @@ let make ::transaction ::cashes ::cryptos ::onDelete _children => {
             <td title=(name crypto_id)>
               (symbol crypto_id |> format received)
             </td>
-            <td> (st transaction.timestamp |> se) </td>
-            <td />
           </Aux>
         | Sell crypto_id spend cash_id received =>
           <Aux>
@@ -35,8 +33,6 @@ let make ::transaction ::cashes ::cryptos ::onDelete _children => {
               (symbol crypto_id |> format spend)
             </td>
             <td> (code cash_id |> format received) </td>
-            <td> (st transaction.timestamp |> se) </td>
-            <td />
           </Aux>
         | Deposit currency received =>
           <Aux>
@@ -49,8 +45,6 @@ let make ::transaction ::cashes ::cryptos ::onDelete _children => {
                 <td title=(name id)> (symbol id |> format received) </td>
               }
             )
-            <td> (st transaction.timestamp |> se) </td>
-            <td />
           </Aux>
         | Withdraw currency spend =>
           <Aux>
@@ -63,20 +57,17 @@ let make ::transaction ::cashes ::cryptos ::onDelete _children => {
               }
             )
             <td />
-            <td> (st transaction.timestamp |> se) </td>
-            <td />
           </Aux>
         | Exchange from_id spend to_id received =>
           <Aux>
             (kind "E")
             <td title=(name from_id)> (symbol from_id |> format spend) </td>
             <td title=(name to_id)> (symbol to_id |> format received) </td>
-            <td> (st transaction.timestamp |> se) </td>
-            <td />
           </Aux>
         }
       )
-      <td>
+      <td className="timestamp"> (st transaction.timestamp |> se) </td>
+      <td className="actions">
         <Inputs.ActionButton
           squared=true
           image=(loadResource "./remove.svg")

@@ -20,5 +20,10 @@
   --border-color-focus: color(var(--primary-color) alpha(60%));
 
   --spacing: 1rem;
+  --phone-section-spacing: calc(var(--spacing) * 2);
   --section-spacing: calc(var(--spacing) * 4);
+
+  @custom-media --phone-ls only screen and (min-width: 480px); /* landscape */
+  @custom-media --tablet only screen and (min-width: 768px);
+  @custom-media --desktop only screen and (min-width: 992px);
 }

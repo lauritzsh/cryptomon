@@ -1,58 +1,140 @@
 @import '../index/properties.css';
 
 .transaction-form {
-  display: flex;
-  align-items: center;
-
-  margin-bottom: var(--section-spacing);
+  lost-flex-container: row;
+  margin-bottom: var(--phone-section-spacing);
 
   &.buy,
   &.sell,
+  &.deposit,
+  &.withdraw,
   &.exchange {
     & .kind,
+    & .timestamp,
+    & .add,
     & .received,
     & .spend,
     & .crypto,
     & .cash,
     & .from,
     & .to,
+    & .divider {
+      margin-bottom: var(--spacing);
+    }
+  }
+
+  &.buy,
+  &.sell,
+  &.deposit,
+  &.withdraw,
+  &.exchange {
+    & .kind,
+    & .timestamp,
     & .add {
-      lost-column: 1/8;
+      lost-column: 1/1 0;
     }
 
-    & .timestamp {
-      lost-column: 2/8;
+    & .received,
+    & .spend {
+      lost-column: 1/2 2 0;
+      padding-right: calc(var(--spacing) / 2);
+    }
+
+    & .crypto,
+    & .cash,
+    & .from,
+    & .to {
+      lost-column: 1/2 2 0;
+      padding-left: calc(var(--spacing) / 2);
     }
   }
 
   &.deposit,
   &.withdraw {
-    & .kind,
     & .received,
-    & .spend,
-    & .add {
-      lost-column: 1/8;
-    }
-
-    & .timestamp {
-      lost-column: 2/8;
+    & .spend {
+      lost-column: 1/1;
+      padding: 0;
     }
 
     & .currency {
-      display: flex;
+      lost-flex-container: row;
+      lost-column: 1/1;
       align-items: center;
-      lost-column: 3/8;
-
-      & .divider {
-        text-align: center;
-        font-size: 8px;
-        color: rgba(0, 0, 0, 0.5);
-        lost-column: 1/15;
-      }
+      justify-content: space-between;
 
       & .crypto,
       & .cash {
-        lost-column: 7/15;
+        lost-column: 2/5;
+        padding: 0;
+      }
+
+      & .divider {
+        text-align: center;
+        lost-column: 1/5;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 0.75rem;
+      }
+    }
+  }
+}
+
+@media (--tablet) {
+  .transaction-form {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: var(--section-spacing);
+
+    &.buy,
+    &.sell,
+    &.exchange {
+      & .kind,
+      & .received,
+      & .spend,
+      & .crypto,
+      & .cash,
+      & .from,
+      & .to,
+      & .add {
+        lost-column: 1/8;
+        padding: 0;
+      }
+
+      & .timestamp {
+        lost-column: 2/8;
+        padding: 0;
+      }
+    }
+
+    &.deposit,
+    &.withdraw {
+      & .kind,
+      & .received,
+      & .spend,
+      & .add {
+        lost-column: 1/8;
+        padding: 0;
+      }
+
+      & .timestamp {
+        lost-column: 2/8;
+        padding: 0;
+      }
+
+      & .currency {
+        display: flex;
+        lost-column: 3/8;
+
+        & .divider {
+          lost-column: 1/15;
+          font-size: 0.5rem;
+        }
+
+        & .crypto,
+        & .cash {
+          lost-column: 7/15;
+        }
       }
     }
   }

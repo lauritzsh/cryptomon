@@ -1,13 +1,26 @@
 @import '../index/properties.css';
 
 .tutorial {
-  width: 660px;
-  margin: 0 auto;
   color: color(var(--black) alpha(75%));
   margin-bottom: calc(var(--spacing) * 4);
 
+  @media (--tablet) {
+    & {
+      width: 660px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+  }
+
   & .intro {
     text-align: justify;
+  }
+
+  @media (--tablet) {
+    & .intro,
+    & .getting-started {
+      margin: 0;
+    }
   }
 
   & .title {

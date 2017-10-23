@@ -16,7 +16,31 @@
       padding: calc(var(--spacing) * 0.5) 0;
 
       &.kind {
-        width: 4rem;
+        width: 1.25rem;
+
+        @media (--tablet) {
+          & {
+            width: 4rem;
+          }
+        }
+      }
+
+      &.actions {
+        width: 2rem;
+
+        @media (--tablet) {
+          width: initial;
+        }
+      }
+    }
+  }
+
+  & .timestamp {
+    display: none;
+
+    @media (--tablet) {
+      & {
+        display: table-cell;
       }
     }
   }

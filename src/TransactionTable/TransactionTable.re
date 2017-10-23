@@ -23,9 +23,8 @@ let make ::cashes ::cryptos ::onDelete ::transactions _children => {
             <th className="kind" />
             <th> (se "Spend") </th>
             <th> (se "Received") </th>
-            <th> (se "When") </th>
-            <th />
-            <th />
+            <th className="timestamp"> (se "When") </th>
+            <th className="actions" />
           </tr>
         </thead>
         <tbody> (le tbody) </tbody>
