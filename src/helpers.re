@@ -1,22 +1,22 @@
-external loadCSS : string => unit = "require" [@@bs.val];
+[@bs.val] external loadCSS : string => unit = "require";
 
-external loadResource : string => string = "require" [@@bs.val];
+[@bs.val] external loadResource : string => string = "require";
 
-external fixed : float => int => string = "toFixed" [@@bs.send];
+[@bs.send] external fixed : (float, int) => string = "toFixed";
 
-external inf : float = "Infinity" [@@bs.val];
+[@bs.val] external inf : float = "Infinity";
 
 type date;
 
-external create_date : float => date = "Date" [@@bs.new];
+[@bs.new] external create_date : float => date = "Date";
 
-external string_of_date : date => string = "toLocaleString" [@@bs.send];
+[@bs.send] external string_of_date : date => string = "toLocaleString";
 
-external timestamp_of_date : date => float = "getTime" [@@bs.send];
+[@bs.send] external timestamp_of_date : date => float = "getTime";
 
-external timestamp : unit => float = "Date.now" [@@bs.val];
+[@bs.val] external timestamp : unit => float = "Date.now";
 
-let string_of_timestamp ts => ts |> create_date |> string_of_date;
+let string_of_timestamp = (ts) => ts |> create_date |> string_of_date;
 
 let st = string_of_timestamp;
 
@@ -24,7 +24,7 @@ let se = ReasonReact.stringToElement;
 
 let ae = ReasonReact.arrayToElement;
 
-let le ls => ls |> Array.of_list |> ReasonReact.arrayToElement;
+let le = (ls) => ls |> Array.of_list |> ReasonReact.arrayToElement;
 
 let si = string_of_int;
 
@@ -38,7 +38,7 @@ let sup = String.uppercase;
 
 let slo = String.lowercase;
 
-let valueFromEvent evt => {
+let valueFromEvent = (evt) => {
   let obj = evt |> ReactEventRe.Form.target |> ReactDOMRe.domElementToObj;
   obj##value
 };

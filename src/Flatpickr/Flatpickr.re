@@ -1,22 +1,18 @@
 open Helpers;
 
-loadCSS "flatpickr/dist/flatpickr.css";
+loadCSS("flatpickr/dist/flatpickr.css");
 
-loadCSS "./Flatpickr.css";
+loadCSS("./Flatpickr.css");
 
-external flatpickr : ReasonReact.reactClass =
-  "default" [@@bs.module "react-flatpickr"];
+[@bs.module "react-flatpickr"] external flatpickr : ReasonReact.reactClass = "default";
 
-let make ::onChange ::className children =>
-  ReasonReact.wrapJsForReason
-    reactClass::flatpickr
-    props::{
+let make = (~onChange, ~className, children) =>
+  ReasonReact.wrapJsForReason(
+    ~reactClass=flatpickr,
+    ~props={
       "className": className,
       "onChange": onChange,
-      "options": {
-        "enableTime": Js.true_,
-        "defaultDate": timestamp (),
-        "time_24hr": Js.true_
-      }
-    }
-    children;
+      "options": {"enableTime": Js.true_, "defaultDate": timestamp(), "time_24hr": Js.true_}
+    },
+    children
+  );

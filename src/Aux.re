@@ -1,13 +1,14 @@
 open Helpers;
 
-let component = ReasonReact.statelessComponent "Aux";
+let component = ReasonReact.statelessComponent("Aux");
 
-let make children => {
+let make = (children) => {
   ...component,
-  render: fun _self =>
-    ae (
-      Array.mapi
-        (fun i child => ReasonReact.cloneElement child props::{"key": i} [||])
+  render: (_self) =>
+    ae(
+      Array.mapi(
+        (i, child) => ReasonReact.cloneElement(child, ~props={"key": i}, [||]),
         children
+      )
     )
 };

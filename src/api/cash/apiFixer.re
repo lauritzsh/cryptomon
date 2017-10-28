@@ -1,12 +1,11 @@
-external fetch' : unit => Js.Promise.t Js.Json.t =
-  "fetch" [@@bs.module "./fetch"];
+[@bs.module "./fetch"] external fetch' : unit => Js.Promise.t(Js.Json.t) = "fetch";
 
-let fetch onReceive =>
+let fetch = (onReceive) =>
   Currency.Cash.(
     Js.Promise.(
-      fetch' ()
-      |> then_ (fun json => (Json.Decode.list decode) json |> resolve)
-      |> then_ (fun cashes => onReceive cashes |> resolve)
+      fetch'()
+      |> then_((json) => (Json.Decode.list(decode))(json) |> resolve)
+      |> then_((cashes) => onReceive(cashes) |> resolve)
       |> ignore
     )
   );
