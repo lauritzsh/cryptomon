@@ -7,8 +7,15 @@ module Decode = {
     id: field("id", string, json),
     name: field("name", string, json),
     symbol: field("symbol", string, json),
-    usd_rate: field("price_usd", string, json) |> fs,
-    btc_rate: field("price_btc", string, json) |> fs
+    /* Price for both might be `null` */
+    usd_rate:
+      try (field("price_usd", string, json) |> fs) {
+      | DecodeError(_) => 0.0
+      },
+    btc_rate:
+      try (field("price_btc", string, json) |> fs) {
+      | DecodeError(_) => 0.0
+      }
   };
 };
 
