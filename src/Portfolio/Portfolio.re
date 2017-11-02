@@ -12,20 +12,11 @@ let component = ReasonReact.statelessComponent("Portfolio");
 
 module PortfolioItem = {
   let component = ReasonReact.statelessComponent("PortfolioItem");
-  let make = (~item, ~change, _children) => {
+  let make = (~item, _children) => {
     ...component,
     render: (_self) =>
       <div className="portfolio-item">
-        <div className="top">
-          <div className="name"> (se(item.name)) </div>
-          (
-            inf == fs(change) ?
-              ReasonReact.nullElement :
-              fs(change) >= 0.0 ?
-                <div className="up"> ("% +" ++ change |> se) </div> :
-                <div className="down"> ("% " ++ change |> se) </div>
-          )
-        </div>
+        <div className="top"> <div className="name"> (se(item.name)) </div> </div>
         <h3 className="value">
           ("$" ++ (fixed(item.value, 2) ++ (" (" ++ (sf(item.amount) ++ ")"))) |> se)
         </h3>
@@ -68,11 +59,10 @@ let make = (~cryptos, ~cashes, ~transactions, _children) => {
         |> addOrUpdate(((v, s)) => (v +. received, s), to_id, (0.0, 0.0))
       };
     let portfolio = List.fold_right(updatePortfolio, transactions, empty);
-    let item = ((key, (amount, spend))) => {
+    let item = ((key, (amount, _))) => {
       let crypto: Crypto.t = la(key, cryptos);
       let item = {name: crypto.name, amount, value: amount *. crypto.usd_rate};
-      let change = fixed((item.value -. spend) /. spend *. 100., 2);
-      <PortfolioItem key item change />
+      <PortfolioItem key item />
     };
     let items = List.map(item, bindings(portfolio));
     <div className="portfolio"> (le(items)) </div>
