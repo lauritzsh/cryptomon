@@ -1,15 +1,29 @@
 @import '../index/properties.css';
 
 .footer {
-  text-align: center;
   height: var(--footer-height);
-  line-height: var(--footer-height);
   margin-top: var(--phone-section-spacing);
   border-top: 1px solid var(--border-color);
 
-  & .home,
-  & .github {
-    text-decoration: none;
-    font-weight: 600;
+  & .inner {
+    lost-flex-container: row;
+    width: var(--container-width);
+    margin: 0 auto;
+    padding: 1rem;
+
+    & .home,
+    & .github {
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    & .info,
+    & .addresses {
+      lost-column: 1/2;
+    }
+
+    & .addresses {
+      text-align: right;
+    }
   }
 }
