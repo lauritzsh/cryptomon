@@ -32,8 +32,7 @@ module Decode = {
   open Currency;
   open! Json.Decode;
   let state = (json) => {
-    transactions:
-      field("transactions", list(Transaction.Decode.transaction), json),
+    transactions: field("transactions", list(Transaction.Decode.transaction), json),
     cryptos:
       json
       |> field("cryptos", list(Currency.Crypto.decode))
@@ -78,8 +77,7 @@ let sample = (_event) => Sample;
 
 let delete = (transaction, _event) => Delete(transaction);
 
-let loading = (cryptos, cashes) =>
-  List.length(cryptos) === 0 || List.length(cashes) === 0;
+let loading = (cryptos, cashes) => List.length(cryptos) === 0 || List.length(cashes) === 0;
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -96,42 +94,26 @@ let make = (_children) => {
       switch action {
       | Sample =>
         ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            showTutorial: false,
-            transactions: Transaction.Sample.data
-          },
+          {...state, showTutorial: false, transactions: Transaction.Sample.data},
           persist
         )
       | ReceiveCashes(cashes) =>
         ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            cashes: List.map(Cash.((cash) => (cash.id, cash)), cashes)
-          },
+          {...state, cashes: List.map(Cash.((cash) => (cash.id, cash)), cashes)},
           persist
         )
       | ReceiveCryptos(cryptos) =>
         ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            cryptos:
-              List.map(Crypto.((crypto) => (crypto.id, crypto)), cryptos)
-          },
+          {...state, cryptos: List.map(Crypto.((crypto) => (crypto.id, crypto)), cryptos)},
           persist
         )
       | Add(transaction) =>
         ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            showTutorial: false,
-            transactions: [transaction, ...state.transactions]
-          },
+          {...state, showTutorial: false, transactions: [transaction, ...state.transactions]},
           persist
         )
       | Delete(transaction) =>
-        let transactions =
-          List.filter((txn) => txn !== transaction, state.transactions);
+        let transactions = List.filter((txn) => txn !== transaction, state.transactions);
         ReasonReact.UpdateWithSideEffects({...state, transactions}, persist)
       }
     ),
@@ -146,12 +128,7 @@ let make = (_children) => {
         <div className="body">
           (
             showTutorial ?
-              <Tutorial
-                cashes
-                cryptos
-                onSampleClick=(reduce(sample))
-                onSubmit=(reduce(add))
-              /> :
+              <Tutorial cashes cryptos onSampleClick=(reduce(sample)) onSubmit=(reduce(add)) /> :
               <Aux>
                 <TransactionForm cryptos cashes onSubmit=(reduce(add)) />
                 <Portfolio cryptos cashes transactions />
@@ -164,5 +141,6 @@ let make = (_children) => {
               </Aux>
           )
         </div>
+        <Footer />
       </div>
 };

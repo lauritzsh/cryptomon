@@ -23,6 +23,10 @@
   --phone-section-spacing: calc(var(--spacing) * 2);
   --section-spacing: calc(var(--spacing) * 4);
 
+  --container-width: 960px;
+
+  --footer-height: 3rem;
+
   @custom-media --phone-ls only screen and (min-width: 480px); /* landscape */
   @custom-media --tablet only screen and (min-width: 768px);
   @custom-media --desktop only screen and (min-width: 992px);

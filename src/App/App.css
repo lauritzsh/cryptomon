@@ -1,7 +1,14 @@
 @import '../index/properties.css';
 
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .body {
   padding: var(--spacing);
+  flex: 1;
 }
 
 .header {
@@ -22,7 +29,7 @@
   }
 
   .body {
-    width: 960px;
+    width: var(--container-width);
     margin: 0 auto;
     color: var(--text-color);
   }
