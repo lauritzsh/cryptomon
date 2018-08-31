@@ -11,7 +11,7 @@ is still a WIP so minor bugs can be expected but please report any
 [here](https://github.com/lauritzsh/cryptomon/issues) thanks.
 
 The crypto data is downloaded from [CoinMarketCap](https://coinmarketcap.com/)
-and cash data is downloaded from [Fixer](http://fixer.io/).
+and cash data is downloaded from [Exchange Rates API](https://exchangeratesapi.io/).
 
 ## How to run
 
