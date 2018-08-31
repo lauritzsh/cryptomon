@@ -23,8 +23,8 @@ let make = (_children) => {
           </div>
         </div>
         <div className="addresses">
-          <div className="bitcoin"> (se("1K2Adv2oEV1UFP8imoPHu2xRTFpc9dLpH3")) </div>
-          <div className="ethereum"> (se("0x133069296574ae32dD703AE11FfEe8924DcF349D")) </div>
+          <div className="bitcoin"> (se("BTC: 1K2Adv2oEV1UFP8imoPHu2xRTFpc9dLpH3")) </div>
+          <div className="ethereum"> (se("ETH: 0x133069296574ae32dD703AE11FfEe8924DcF349D")) </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
 @import '../index/properties.css';
 
 .footer {
-  height: var(--footer-height);
   margin-top: var(--phone-section-spacing);
   border-top: 1px solid var(--border-color);
 
